@@ -1,5 +1,5 @@
 /* ==========================================================================
-   CIVITAS - Base Styles, Reset & Accessibility (WCAG 2.2 AA)
+   AYUNTAMIENTO DE CUMBRES MAYORES — Base, Ambient Mesh & Reset
    ========================================================================== */
 
 *, *::before, *::after {
@@ -15,57 +15,79 @@ html {
 }
 
 body {
-  font-family: var(--civ-font-sans);
+  font-family: var(--cm-font-sans);
   background-color: var(--bg-app);
   color: var(--text-primary);
-  line-height: 1.5;
+  line-height: 1.55;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  transition: background-color var(--civ-transition-normal), color var(--civ-transition-normal);
+  transition: background-color var(--cm-duration-normal) var(--cm-ease-out), color var(--cm-duration-normal) var(--cm-ease-out);
   overflow-x: hidden;
+  position: relative;
 }
 
-/* Accessibility: Visible Focus Indicators */
+/* Atmospheric Ambient Mesh Glows (Adds deep visual craft) */
+body::before {
+  content: '';
+  position: fixed;
+  top: -150px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 900px;
+  height: 450px;
+  background: radial-gradient(ellipse at center, rgba(16, 185, 129, 0.09) 0%, rgba(99, 102, 241, 0.05) 50%, transparent 75%);
+  pointer-events: none;
+  z-index: 0;
+  filter: blur(50px);
+}
+
+[data-theme="dark"] body::before {
+  background: radial-gradient(ellipse at center, rgba(16, 185, 129, 0.15) 0%, rgba(79, 70, 229, 0.1) 45%, transparent 75%);
+}
+
+/* Accessibility: Visible Focus Ring */
 :focus-visible {
-  outline: 3px solid var(--border-focus);
-  outline-offset: 2px;
-  border-radius: var(--civ-radius-sm);
+  outline: 2px solid var(--border-focus);
+  outline-offset: 3px;
+  border-radius: var(--cm-radius-xs);
 }
 
-/* Skip link for screen readers & keyboard navigation */
+/* Skip link */
 .skip-link {
   position: absolute;
-  top: -100px;
-  left: 1rem;
+  top: -120px;
+  left: 1.5rem;
   background: var(--brand-primary);
-  color: var(--text-inverse);
-  padding: 0.75rem 1.25rem;
-  border-radius: var(--civ-radius-md);
-  font-weight: 600;
-  z-index: 9999;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--cm-radius-md);
+  font-weight: 700;
+  font-size: 0.9rem;
+  z-index: 99999;
   text-decoration: none;
-  box-shadow: var(--civ-shadow-lg);
-  transition: top var(--civ-transition-fast);
+  box-shadow: var(--shadow-lg);
+  transition: top var(--cm-duration-fast) var(--cm-ease-out);
 }
 
 .skip-link:focus {
-  top: 1rem;
+  top: 1.5rem;
 }
 
-/* Typography Base */
+/* Typography Hierarchy */
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--civ-font-heading);
+  font-family: var(--cm-font-heading);
   color: var(--text-primary);
-  font-weight: 700;
-  line-height: 1.25;
+  font-weight: 750;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
 }
 
-h1 { font-size: clamp(1.75rem, 4vw, 2.5rem); }
-h2 { font-size: clamp(1.4rem, 3vw, 1.875rem); }
-h3 { font-size: clamp(1.15rem, 2.5vw, 1.35rem); }
+h1 { font-size: clamp(2rem, 4.5vw, 3rem); font-weight: 800; }
+h2 { font-size: clamp(1.5rem, 3.2vw, 2.15rem); }
+h3 { font-size: clamp(1.2rem, 2.4vw, 1.45rem); }
 h4 { font-size: 1.1rem; }
 
 p {
@@ -75,7 +97,7 @@ p {
 a {
   color: var(--brand-primary);
   text-decoration: none;
-  transition: color var(--civ-transition-fast);
+  transition: color var(--cm-duration-fast);
 }
 
 a:hover {
@@ -92,64 +114,77 @@ button, input, select, textarea {
   color: inherit;
 }
 
-/* Scrollbar Customization */
+/* Scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--bg-surface-subtle);
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--civ-slate-400);
-  border-radius: var(--civ-radius-full);
+  background: var(--border-strong);
+  border-radius: var(--cm-radius-full);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--civ-slate-500);
+  background: var(--cm-navy-500);
 }
 
-/* Utilities */
-.visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
-
+/* Layout Container */
 .container {
   width: 100%;
-  max-width: var(--civ-max-width);
+  max-width: var(--cm-max-width);
   margin-left: auto;
   margin-right: auto;
-  padding-left: 1.25rem;
-  padding-right: 1.25rem;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  position: relative;
+  z-index: 1;
 }
 
-.glass-panel {
-  background: var(--glass-bg);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  border: 1px solid var(--glass-border);
-  box-shadow: var(--civ-shadow-md);
-  border-radius: var(--civ-radius-lg);
-}
-
+/* Text Gradients */
 .text-gradient {
-  background: linear-gradient(135deg, var(--civ-primary-600) 0%, var(--civ-emerald-600) 100%);
+  background: linear-gradient(135deg, #059669 0%, #1E3A8A 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 [data-theme="dark"] .text-gradient {
-  background: linear-gradient(135deg, var(--civ-primary-400) 0%, var(--civ-emerald-500) 100%);
+  background: linear-gradient(135deg, #34D399 0%, #818CF8 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+/* Pulse Live Dot */
+.live-pulse {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.775rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--brand-primary-text);
+  background: var(--brand-primary-light);
+  border: 1px solid var(--brand-primary-glow);
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--cm-radius-full);
+}
+
+.live-pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: var(--brand-primary);
+  box-shadow: 0 0 0 0 var(--brand-primary-glow);
+  animation: pulseEffect 2s infinite;
+}
+
+@keyframes pulseEffect {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
 }

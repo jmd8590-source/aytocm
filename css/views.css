@@ -1,103 +1,101 @@
 /* ==========================================================================
-   CIVITAS - Views & Page Specific Styles
+   AYUNTAMIENTO DE CUMBRES MAYORES — Views & Bento Dashboards
    ========================================================================== */
 
-/* --- Hero Section --- */
-.hero-banner {
-  background: linear-gradient(135deg, rgba(79, 70, 229, 0.08) 0%, rgba(16, 185, 129, 0.06) 100%);
+/* --- Municipal Announcement Ticker (Bando Móvil) --- */
+.bando-ticker {
+  background: linear-gradient(90deg, rgba(5, 150, 105, 0.1) 0%, rgba(99, 102, 241, 0.08) 100%);
   border: 1px solid var(--border-subtle);
-  border-radius: var(--civ-radius-xl);
-  padding: 2.5rem 2rem;
+  border-radius: var(--cm-radius-md);
+  padding: 0.65rem 1.25rem;
   margin-bottom: 2rem;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 2rem;
-  position: relative;
-  overflow: hidden;
+  gap: 1rem;
+  font-size: 0.85rem;
 }
 
-.hero-banner::before {
-  content: '';
+.bando-tag {
+  background: var(--brand-primary);
+  color: white;
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--cm-radius-xs);
+  font-weight: 800;
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.bando-text {
+  color: var(--text-secondary);
+  font-weight: 550;
+  flex: 1;
+}
+
+/* --- Hero Bento Grid --- */
+.hero-bento-main {
+  grid-column: span 8;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 2.25rem;
+  background: linear-gradient(145deg, var(--bg-surface) 0%, var(--bg-surface-subtle) 100%);
+  position: relative;
+}
+
+.hero-bento-main::after {
+  content: '🏰';
   position: absolute;
-  top: -50px;
-  right: -50px;
-  width: 200px;
-  height: 200px;
-  background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
-  border-radius: 50%;
+  right: 1.5rem;
+  bottom: 1rem;
+  font-size: 6.5rem;
+  opacity: 0.06;
   pointer-events: none;
 }
 
-.hero-content {
-  max-width: 650px;
-}
-
-.hero-title {
-  font-size: clamp(1.8rem, 3.5vw, 2.4rem);
-  margin-bottom: 0.75rem;
-  line-height: 1.2;
-}
-
-.hero-subtitle {
-  font-size: 1.05rem;
-  color: var(--text-secondary);
-  margin-bottom: 1.5rem;
-}
-
-.hero-actions {
+.hero-bento-stat {
+  grid-column: span 4;
   display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1.75rem;
+  background: var(--card-gradient);
 }
 
-.hero-steps {
+.hero-bento-cta {
+  grid-column: span 4;
+  padding: 1.5rem;
   display: flex;
-  gap: 1.5rem;
-  margin-top: 1.5rem;
-  padding-top: 1.5rem;
-  border-top: 1px dashed var(--border-strong);
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+  background: var(--card-gradient);
 }
 
-.hero-step-item {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--text-secondary);
+.hero-bento-cta:hover {
+  border-color: var(--brand-primary);
+  transform: translateY(-2px);
 }
 
-.hero-step-num {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: var(--brand-primary);
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.75rem;
-}
-
-/* --- Map View & Leaflet Integrations --- */
+/* --- Map View Layout --- */
 .map-view-container {
   display: grid;
-  grid-template-columns: 1fr 360px;
+  grid-template-columns: 1fr 380px;
   gap: 1.25rem;
-  height: calc(100vh - 210px);
-  min-height: 550px;
-  margin-bottom: 1.5rem;
+  height: calc(100vh - 200px);
+  min-height: 560px;
+  margin-bottom: 2rem;
 }
 
 .map-wrapper {
   position: relative;
   width: 100%;
   height: 100%;
-  border-radius: var(--civ-radius-lg);
+  border-radius: var(--cm-radius-lg);
   overflow: hidden;
   border: 1px solid var(--border-subtle);
-  box-shadow: var(--civ-shadow-md);
+  box-shadow: var(--shadow-md);
 }
 
 #map {
@@ -106,27 +104,19 @@
   z-index: 1;
 }
 
-.map-floating-controls {
-  position: absolute;
-  top: 1rem;
-  left: 1rem;
-  z-index: 10;
-  display: flex;
-  gap: 0.5rem;
-}
-
 .map-sidebar {
   background-color: var(--bg-surface);
   border: 1px solid var(--border-subtle);
-  border-radius: var(--civ-radius-lg);
+  border-radius: var(--cm-radius-lg);
   display: flex;
   flex-direction: column;
   height: 100%;
   overflow: hidden;
+  box-shadow: var(--shadow-sm);
 }
 
 .map-sidebar-header {
-  padding: 1rem 1.25rem;
+  padding: 1.25rem 1.5rem;
   border-bottom: 1px solid var(--border-subtle);
   background-color: var(--bg-surface-subtle);
 }
@@ -140,11 +130,11 @@
   gap: 0.75rem;
 }
 
-/* --- Report Wizard (4-Steps Flow) --- */
+/* --- Wizard Stepper --- */
 .wizard-progress {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 2rem;
+  margin-bottom: 2.25rem;
   position: relative;
 }
 
@@ -154,7 +144,7 @@
   top: 18px;
   left: 30px;
   right: 30px;
-  height: 3px;
+  height: 2px;
   background-color: var(--border-strong);
   z-index: 1;
 }
@@ -170,62 +160,62 @@
 }
 
 .wizard-node-circle {
-  width: 36px;
-  height: 36px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
   background-color: var(--bg-surface);
   border: 2px solid var(--border-strong);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 700;
+  font-weight: 800;
   font-size: 0.9rem;
   color: var(--text-muted);
-  transition: all var(--civ-transition-fast);
+  transition: all var(--cm-duration-fast);
 }
 
 .wizard-step-node.active .wizard-node-circle {
   border-color: var(--brand-primary);
   background-color: var(--brand-primary);
   color: white;
-  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.25);
+  box-shadow: 0 0 0 5px var(--brand-primary-light);
 }
 
 .wizard-step-node.completed .wizard-node-circle {
-  border-color: var(--civ-emerald-500);
-  background-color: var(--civ-emerald-500);
+  border-color: var(--brand-primary);
+  background-color: var(--brand-primary);
   color: white;
 }
 
 .wizard-node-label {
   font-size: 0.8rem;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text-secondary);
 }
 
 .wizard-step-pane {
   display: none;
-  animation: fadeIn 0.3s ease-out;
+  animation: fadeInPane 0.3s var(--cm-ease-out);
 }
 
 .wizard-step-pane.active {
   display: block;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(6px); }
+@keyframes fadeInPane {
+  from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Image Upload Preview Box */
+/* Photo Uploader Drop Zone */
 .photo-uploader {
   border: 2px dashed var(--border-strong);
-  border-radius: var(--civ-radius-lg);
-  padding: 2rem;
+  border-radius: var(--cm-radius-lg);
+  padding: 2.25rem 1.5rem;
   text-align: center;
   cursor: pointer;
   background-color: var(--bg-surface-subtle);
-  transition: all var(--civ-transition-fast);
+  transition: all var(--cm-duration-fast);
 }
 
 .photo-uploader:hover {
@@ -235,17 +225,17 @@
 
 .photo-preview-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 0.85rem;
   margin-top: 1rem;
 }
 
 .photo-preview-item {
   position: relative;
-  border-radius: var(--civ-radius-md);
+  border-radius: var(--cm-radius-md);
   overflow: hidden;
-  height: 90px;
-  box-shadow: var(--civ-shadow-sm);
+  height: 95px;
+  box-shadow: var(--shadow-sm);
 }
 
 .photo-preview-item img {
@@ -258,7 +248,7 @@
   position: absolute;
   top: 4px;
   right: 4px;
-  background: rgba(0, 0, 0, 0.65);
+  background: rgba(0, 0, 0, 0.75);
   color: white;
   border: none;
   border-radius: 50%;
@@ -271,11 +261,11 @@
   font-size: 0.75rem;
 }
 
-/* Duplicate Incident Detection Alert Box */
+/* Duplicate Banner */
 .duplicate-alert-banner {
   background: linear-gradient(135deg, rgba(245, 158, 11, 0.12) 0%, rgba(245, 158, 11, 0.05) 100%);
-  border: 1.5px solid var(--civ-amber-500);
-  border-radius: var(--civ-radius-lg);
+  border: 1.5px solid var(--cm-amber-500);
+  border-radius: var(--cm-radius-lg);
   padding: 1.25rem;
   margin-bottom: 1.5rem;
   display: flex;
@@ -283,7 +273,7 @@
   align-items: flex-start;
 }
 
-/* --- Incidents Feed & Filtering --- */
+/* --- Incidents Feed & Grid --- */
 .feed-header-bar {
   display: flex;
   align-items: center;
@@ -293,17 +283,10 @@
   margin-bottom: 1.5rem;
 }
 
-.filter-group {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-}
-
 .incidents-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 1.25rem;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 1.5rem;
 }
 
 .incident-card {
@@ -314,12 +297,12 @@
 }
 
 .incident-card-image {
-  height: 170px;
+  height: 180px;
   width: 100%;
   object-fit: cover;
-  border-radius: calc(var(--civ-radius-lg) - 4px) calc(var(--civ-radius-lg) - 4px) 0 0;
-  margin: -1.25rem -1.25rem 1rem -1.25rem;
-  width: calc(100% + 2.5rem);
+  border-radius: calc(var(--cm-radius-lg) - 4px) calc(var(--cm-radius-lg) - 4px) 0 0;
+  margin: -1.5rem -1.5rem 1.15rem -1.5rem;
+  width: calc(100% + 3rem);
 }
 
 .incident-meta {
@@ -331,15 +314,16 @@
 
 .incident-title {
   font-size: 1.15rem;
-  font-weight: 700;
-  margin-bottom: 0.5rem;
+  font-weight: 750;
+  margin-bottom: 0.45rem;
   color: var(--text-primary);
+  line-height: 1.3;
 }
 
 .incident-desc {
   font-size: 0.9rem;
   color: var(--text-secondary);
-  margin-bottom: 1rem;
+  margin-bottom: 1.15rem;
   flex: 1;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -352,22 +336,21 @@
   align-items: center;
   justify-content: space-between;
   border-top: 1px solid var(--border-subtle);
-  padding-top: 0.75rem;
+  padding-top: 0.85rem;
   font-size: 0.8rem;
   color: var(--text-muted);
 }
 
-/* --- Suggestions / Citizen Proposals View --- */
+/* --- Suggestions & Voting --- */
 .suggestions-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
   gap: 1.5rem;
 }
 
 .suggestion-card {
   display: flex;
   flex-direction: column;
-  position: relative;
 }
 
 .vote-badge-btn {
@@ -375,13 +358,13 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 0.6rem 0.9rem;
-  border-radius: var(--civ-radius-md);
+  padding: 0.65rem 0.95rem;
+  border-radius: var(--cm-radius-md);
   border: 1.5px solid var(--border-subtle);
   background-color: var(--bg-surface-subtle);
   cursor: pointer;
-  transition: all var(--civ-transition-fast);
-  min-width: 60px;
+  transition: all var(--cm-duration-fast);
+  min-width: 64px;
 }
 
 .vote-badge-btn:hover {
@@ -396,56 +379,57 @@
 }
 
 .vote-count {
-  font-size: 1.25rem;
-  font-weight: 800;
+  font-size: 1.35rem;
+  font-weight: 850;
   line-height: 1;
 }
 
 .official-response-box {
-  background-color: var(--civ-emerald-50);
-  border-left: 4px solid var(--civ-emerald-600);
-  padding: 0.75rem 1rem;
-  border-radius: 0 var(--civ-radius-md) var(--civ-radius-md) 0;
-  margin-top: 1rem;
+  background: var(--cm-forest-50);
+  border-left: 4px solid var(--cm-forest-600);
+  padding: 0.85rem 1.15rem;
+  border-radius: 0 var(--cm-radius-md) var(--cm-radius-md) 0;
+  margin-top: 1.15rem;
   font-size: 0.85rem;
 }
 
 [data-theme="dark"] .official-response-box {
-  background-color: rgba(5, 150, 105, 0.15);
+  background: rgba(5, 150, 105, 0.15);
 }
 
-/* --- Admin Dashboard & KPIs --- */
+/* --- KPIs & Admin Dashboard --- */
 .kpi-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 1.25rem;
   margin-bottom: 2rem;
 }
 
 .kpi-card {
-  background-color: var(--bg-surface);
+  background: var(--card-gradient);
   border: 1px solid var(--border-subtle);
-  border-radius: var(--civ-radius-lg);
-  padding: 1.25rem;
+  border-radius: var(--cm-radius-lg);
+  padding: 1.5rem;
   display: flex;
   align-items: center;
-  gap: 1rem;
-  box-shadow: var(--civ-shadow-sm);
+  gap: 1.15rem;
+  box-shadow: var(--shadow-xs);
 }
 
 .kpi-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: var(--civ-radius-md);
+  width: 52px;
+  height: 52px;
+  border-radius: var(--cm-radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
+  font-size: 1.6rem;
+  flex-shrink: 0;
 }
 
 .kpi-value {
-  font-size: 1.75rem;
-  font-weight: 800;
+  font-size: 1.85rem;
+  font-weight: 850;
   line-height: 1.1;
   color: var(--text-primary);
 }
@@ -453,24 +437,26 @@
 .kpi-label {
   font-size: 0.8rem;
   color: var(--text-muted);
-  font-weight: 600;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
 }
 
-/* Kanban Board for Admin Management */
+/* Kanban Board */
 .kanban-board {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.15rem;
   overflow-x: auto;
   padding-bottom: 1rem;
 }
 
 .kanban-column {
   background-color: var(--bg-surface-subtle);
-  border-radius: var(--civ-radius-lg);
-  padding: 1rem;
+  border-radius: var(--cm-radius-lg);
+  padding: 1.15rem;
   border: 1px solid var(--border-subtle);
-  min-height: 400px;
+  min-height: 440px;
   display: flex;
   flex-direction: column;
 }
@@ -479,34 +465,35 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 1rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 2px solid var(--border-strong);
+  margin-bottom: 1.15rem;
+  padding-bottom: 0.65rem;
+  border-bottom: 2.5px solid var(--border-strong);
 }
 
 .kanban-cards-container {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.85rem;
   flex: 1;
 }
 
 .kanban-item {
   background-color: var(--bg-surface);
   border: 1px solid var(--border-subtle);
-  border-radius: var(--civ-radius-md);
-  padding: 0.85rem;
-  box-shadow: var(--civ-shadow-sm);
-  cursor: grab;
-  transition: all var(--civ-transition-fast);
+  border-radius: var(--cm-radius-md);
+  padding: 1rem;
+  box-shadow: var(--shadow-xs);
+  cursor: pointer;
+  transition: all var(--cm-duration-fast);
 }
 
 .kanban-item:hover {
-  box-shadow: var(--civ-shadow-md);
+  box-shadow: var(--shadow-md);
   border-color: var(--brand-primary);
+  transform: translateY(-2px);
 }
 
-/* Audit Log Table */
+/* Audit Table */
 .audit-table {
   width: 100%;
   border-collapse: collapse;
@@ -516,14 +503,14 @@
 
 .audit-table th {
   background-color: var(--bg-surface-subtle);
-  padding: 0.75rem 1rem;
-  font-weight: 700;
+  padding: 0.85rem 1.15rem;
+  font-weight: 750;
   color: var(--text-secondary);
   border-bottom: 1px solid var(--border-strong);
 }
 
 .audit-table td {
-  padding: 0.85rem 1rem;
+  padding: 0.95rem 1.15rem;
   border-bottom: 1px solid var(--border-subtle);
   color: var(--text-primary);
 }
@@ -532,17 +519,19 @@
   background-color: var(--bg-surface-hover);
 }
 
-/* Media Queries for View Responsiveness */
-@media (max-width: 992px) {
+/* Responsive */
+@media (max-width: 960px) {
+  .bento-grid {
+    grid-template-columns: 1fr;
+  }
+  .hero-bento-main, .hero-bento-stat, .hero-bento-cta {
+    grid-column: span 1;
+  }
   .map-view-container {
     grid-template-columns: 1fr;
     height: auto;
   }
   .map-wrapper {
-    height: 400px;
-  }
-  .hero-banner {
-    flex-direction: column;
-    align-items: flex-start;
+    height: 420px;
   }
 }
