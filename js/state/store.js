@@ -1,11 +1,11 @@
 /**
- * CIVITAS - Centralized Reactive Store
- * Manages local persistence, state mutation, and subscriber notifications
+ * CIVITAS / AYUNTAMIENTO DE CUMBRES MAYORES
+ * Centralized Reactive Store para Cumbres Mayores (Huelva)
  */
 
 import { MockData } from './mockData.js';
 
-const STORAGE_KEY = 'civitas_app_state_v1';
+const STORAGE_KEY = 'ayto_cumbresmayores_state_v2';
 
 class Store {
   constructor() {
@@ -17,15 +17,18 @@ class Store {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       try {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        if (parsed.currentMunicipalityId === 'mun-cumbresmayores') {
+          return parsed;
+        }
       } catch (e) {
-        console.error('Error parsing stored Civitas state, fallback to seed data', e);
+        console.error('Error parsing state, resetting to Cumbres Mayores data', e);
       }
     }
 
     const initialState = {
-      currentMunicipalityId: 'mun-1',
-      currentUser: MockData.users[0], // Default: Elena Morales (Citizen)
+      currentMunicipalityId: 'mun-cumbresmayores',
+      currentUser: MockData.users[0], // María Carmen Márquez (Citizen)
       municipalities: [...MockData.municipalities],
       departments: [...MockData.departments],
       categories: [...MockData.categories],
@@ -35,8 +38,8 @@ class Store {
       notifications: [
         {
           id: 'notif-1',
-          title: 'Actualización en tu incidencia',
-          message: 'Tu reporte CIV-2026-10492 ha pasado al estado: En Proceso.',
+          title: 'Actuación en Calle La Portá',
+          message: 'Tu aviso CM-2026-00481 ha pasado al estado: En Proceso (Reparación de adoquines).',
           timestamp: new Date().toISOString(),
           read: false,
           type: 'info'

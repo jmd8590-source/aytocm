@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
-  <title>Civitas — Plataforma Municipal de Incidencias y Participación</title>
-  <meta name="description" content="Plataforma cívica municipal para comunicar incidencias urbanas, participar en propuestas vecinales y seguir la actuación del Ayuntamiento." />
+  <title>Ayuntamiento de Cumbres Mayores — Incidencias y Participación Ciudadana</title>
+  <meta name="description" content="Plataforma oficial del Ayuntamiento de Cumbres Mayores (Huelva) para comunicar incidencias urbanas y rurales, participar en propuestas vecinales y seguir las actuaciones municipales." />
   <meta name="theme-color" content="#4F46E5" />
 
   <!-- PWA Manifest & Apple Touch -->
@@ -39,32 +39,34 @@
     <div class="role-bar-group">
       <span>🎭 <strong>Modo Demostración / Rol:</strong></span>
       <button type="button" class="role-pill active" data-role="ROLE_CITIZEN" onclick="CivitasApp.switchRole('ROLE_CITIZEN')">
-        🙋 Ciudadano
+        🙋 Vecino/a
       </button>
       <button type="button" class="role-pill" data-role="ROLE_EMPLOYEE" onclick="CivitasApp.switchRole('ROLE_EMPLOYEE')">
-        🛠️ Operario Técnico
+        🛠️ Operario Municipal
       </button>
       <button type="button" class="role-pill" data-role="ROLE_MUNICIPAL_ADMIN" onclick="CivitasApp.switchRole('ROLE_MUNICIPAL_ADMIN')">
-        🏛️ Admin Municipal
+        🏛️ Concejalía / Admin
       </button>
       <button type="button" class="role-pill" data-role="ROLE_SUPERADMIN" onclick="CivitasApp.switchRole('ROLE_SUPERADMIN')">
         ⚡ SuperAdmin
       </button>
     </div>
     <div class="role-bar-group">
-      <span style="opacity: 0.85; font-size: 0.75rem;">Multi-Municipio Activo</span>
+      <span style="opacity: 0.9; font-size: 0.775rem;">📍 Cumbres Mayores (Huelva) — 21380</span>
     </div>
   </aside>
 
   <!-- Main Sticky Header -->
   <header class="app-header" role="banner">
     <div class="container header-container">
-      <!-- Brand Logo -->
-      <a class="brand" onclick="CivitasApp.navigateTo('home')" aria-label="Civitas Inicio">
-        <div class="brand-logo">C</div>
+      <!-- Brand Logo / Municipal Crest -->
+      <a class="brand" onclick="CivitasApp.navigateTo('home')" aria-label="Ayuntamiento de Cumbres Mayores Inicio">
+        <div class="brand-logo" style="background: linear-gradient(135deg, #1E3A8A 0%, #047857 100%);">
+          🏰
+        </div>
         <div class="brand-info">
-          <span class="brand-name">Civitas</span>
-          <span class="brand-motto" data-i18n="app_motto">Tu Ayuntamiento más cerca</span>
+          <span class="brand-name" style="font-size: 1.2rem;">Cumbres Mayores</span>
+          <span class="brand-motto">Ayuntamiento de Cumbres Mayores (Huelva)</span>
         </div>
       </a>
 
@@ -74,28 +76,28 @@
           🏠 Inicio
         </button>
         <button class="nav-link" data-route="report" onclick="CivitasApp.navigateTo('report')">
-          📢 <span data-i18n="nav_report">Reportar</span>
+          📢 Reportar Incidencia
         </button>
         <button class="nav-link" data-route="map" onclick="CivitasApp.navigateTo('map')">
-          🗺️ <span data-i18n="nav_map">Mapa</span>
+          🗺️ Mapa Municipal
         </button>
         <button class="nav-link" data-route="incidents" onclick="CivitasApp.navigateTo('incidents')">
-          📋 <span data-i18n="nav_incidents">Incidencias</span>
+          📋 Incidencias
         </button>
         <button class="nav-link" data-route="suggestions" onclick="CivitasApp.navigateTo('suggestions')">
-          💡 <span data-i18n="nav_suggestions">Propuestas</span>
+          💡 Propuestas Vecinales
         </button>
         <button class="nav-link" id="nav-link-admin" data-route="admin" onclick="CivitasApp.navigateTo('admin')" style="display: none;">
-          🏛️ <span data-i18n="nav_admin">Gestión Municipal</span>
+          🏛️ Gestión Municipal
         </button>
       </nav>
 
       <!-- Header Action Controls -->
       <div class="header-actions">
-        <!-- Municipality Selector Dropdown -->
-        <select id="header-municipality-select" class="municipality-select" onchange="CivitasApp.onMunicipalityChange(this.value)" aria-label="Seleccionar Municipio">
-          <!-- Populated dynamically -->
-        </select>
+        <!-- Municipal Badge Info -->
+        <div style="background-color: var(--bg-surface-subtle); padding: 0.35rem 0.75rem; border-radius: var(--civ-radius-md); font-size: 0.8rem; font-weight: 700; color: var(--civ-emerald-700); border: 1px solid var(--border-subtle); display: none; md-display: block;">
+          🌲 Sierra de Aracena
+        </div>
 
         <!-- Dark / Light Theme Toggle -->
         <button type="button" id="theme-toggle-btn" class="btn btn-icon btn-secondary" onclick="CivitasApp.toggleTheme()" aria-label="Cambiar tema">
@@ -127,13 +129,13 @@
       <li>
         <button class="bottom-nav-item" data-route="report" onclick="CivitasApp.navigateTo('report')">
           <span>📢</span>
-          <span>Reportar</span>
+          <span>Avisar</span>
         </button>
       </li>
       <li>
         <button class="bottom-nav-item" data-route="map" onclick="CivitasApp.navigateTo('map')">
           <span>🗺️</span>
-          <span>Mapa</span>
+          <span>Plano</span>
         </button>
       </li>
       <li>
@@ -145,7 +147,7 @@
       <li>
         <button class="bottom-nav-item" data-route="suggestions" onclick="CivitasApp.navigateTo('suggestions')">
           <span>💡</span>
-          <span>Propuestas</span>
+          <span>Ideas</span>
         </button>
       </li>
     </ul>
@@ -170,17 +172,21 @@
   <!-- Global Toast Notification Container -->
   <div id="toast-container" aria-live="assertive" aria-atomic="true"></div>
 
-  <!-- App Footer -->
+  <!-- App Footer with Official Municipal Info -->
   <footer class="app-footer" role="contentinfo">
     <div class="container">
       <div class="footer-grid">
         <div class="footer-col">
           <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
-            <div class="brand-logo" style="width: 32px; height: 32px; font-size: 1rem;">C</div>
-            <strong style="font-size: 1.2rem; color: var(--text-primary);">Civitas</strong>
+            <div class="brand-logo" style="width: 32px; height: 32px; font-size: 1rem; background: linear-gradient(135deg, #1E3A8A 0%, #047857 100%);">🏰</div>
+            <strong style="font-size: 1.15rem; color: var(--text-primary);">Ayuntamiento de Cumbres Mayores</strong>
           </div>
-          <p style="font-size: 0.85rem; margin-bottom: 1rem;">Plataforma cívica digital para la gestión transparente de incidencias urbanas y participación ciudadana activa.</p>
-          <div style="font-size: 0.75rem; color: var(--text-muted);">Cumplimiento WCAG 2.2 AA & RGPD</div>
+          <p style="font-size: 0.85rem; margin-bottom: 0.75rem;">Plataforma digital para la comunicación directa de averías e incidencias en el casco urbano, senderos rurales y dehesas comunales.</p>
+          <div style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.5;">
+            📍 Plaza de España, 1, 21380 Cumbres Mayores (Huelva)<br />
+            📞 Tel: 959 710 001 / 959 710 026<br />
+            ✉️ Email: ayuntamiento@cumbresmayores.es
+          </div>
         </div>
 
         <div class="footer-col">
@@ -188,25 +194,25 @@
           <ul class="footer-links">
             <li><a href="#report" onclick="CivitasApp.navigateTo('report')">Comunicar Incidencia</a></li>
             <li><a href="#map" onclick="CivitasApp.navigateTo('map')">Mapa de Incidencias</a></li>
-            <li><a href="#suggestions" onclick="CivitasApp.navigateTo('suggestions')">Presupuestos Participativos</a></li>
-            <li><a href="#admin" onclick="CivitasApp.navigateTo('admin')">Panel de Administración</a></li>
+            <li><a href="#suggestions" onclick="CivitasApp.navigateTo('suggestions')">Propuestas y Presupuestos</a></li>
+            <li><a href="#admin" onclick="CivitasApp.navigateTo('admin')">Panel de Operarios y Gestión</a></li>
           </ul>
         </div>
 
         <div class="footer-col">
           <h4>Garantías y Seguridad</h4>
           <ul class="footer-links">
-            <li><a href="#audit" onclick="CivitasApp.navigateTo('audit')">Registro de Auditoría</a></li>
-            <li><a href="javascript:void(0)" onclick="alert('Privacidad: Datos personales anonimizados en vistas públicas.')">Política de Privacidad RGPD</a></li>
+            <li><a href="#audit" onclick="CivitasApp.navigateTo('audit')">Registro de Auditoría Municipal</a></li>
+            <li><a href="javascript:void(0)" onclick="alert('Privacidad: Datos de carácter personal anonimizados en cumplimiento de la LOPDGDD y RGPD.')">Política de Privacidad RGPD</a></li>
             <li><a href="javascript:void(0)" onclick="alert('Accesibilidad: Diseñado conforme a criterios WCAG 2.2 nivel AA.')">Declaración de Accesibilidad</a></li>
           </ul>
         </div>
       </div>
 
       <div class="footer-bottom">
-        <div>&copy; 2026 Civitas — Plataforma Municipal de Código Abierto. Todos los derechos reservados.</div>
+        <div>&copy; 2026 Ayuntamiento de Cumbres Mayores (Huelva) — Plataforma Cívica Municipal.</div>
         <div style="display: flex; gap: 1rem;">
-          <span style="font-size: 0.8rem; color: var(--civ-emerald-600); font-weight: 600;">● Sistema Operativo Online</span>
+          <span style="font-size: 0.8rem; color: var(--civ-emerald-600); font-weight: 600;">● Portal Municipal Conectado</span>
         </div>
       </div>
     </div>

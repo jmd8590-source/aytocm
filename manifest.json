@@ -1,11 +1,11 @@
 {
-  "name": "Civitas — Plataforma Municipal de Incidencias y Participación",
-  "short_name": "Civitas",
-  "description": "Comunica incidencias, vota mejoras vecinales y consulta actuaciones del Ayuntamiento.",
+  "name": "Ayuntamiento de Cumbres Mayores — Incidencias y Participación",
+  "short_name": "Ayto Cumbres Mayores",
+  "description": "Comunica incidencias en Cumbres Mayores, vota propuestas vecinales y consulta actuaciones municipales.",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#0F172A",
-  "theme_color": "#4F46E5",
+  "theme_color": "#1E3A8A",
   "orientation": "portrait-primary",
   "icons": [
     {
@@ -23,12 +23,12 @@
     {
       "name": "Reportar Incidencia",
       "url": "./index.html#report",
-      "description": "Abre directamente el asistente en 4 pasos"
+      "description": "Abre el asistente en 4 pasos para Cumbres Mayores"
     },
     {
-      "name": "Mapa en Directo",
+      "name": "Plano Municipal",
       "url": "./index.html#map",
-      "description": "Explora incidencias sobre el plano municipal"
+      "description": "Explora incidencias sobre el mapa de Cumbres Mayores"
     }
   ]
 }

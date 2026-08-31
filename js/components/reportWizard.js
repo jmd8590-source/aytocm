@@ -1,6 +1,6 @@
 /**
- * CIVITAS - Report Wizard Component
- * 4-Step Guided Flow: "Detectar → Ubicar → Informar → Seguir"
+ * CIVITAS / AYUNTAMIENTO DE CUMBRES MAYORES
+ * Report Wizard Component (4-Pasos: "Detectar → Ubicar → Informar → Seguir")
  */
 
 import { store } from '../state/store.js';
@@ -12,11 +12,11 @@ import { NotificationService } from '../services/notificationService.js';
 export const ReportWizard = {
   currentStep: 1,
   formData: {
-    category: 'limpieza',
+    category: 'vias',
     urgency: 'media',
-    lat: 37.6742,
-    lng: -5.9892,
-    address: '',
+    lat: 38.0623,
+    lng: -6.6466,
+    address: 'Calle La Portá, Cumbres Mayores',
     title: '',
     description: '',
     images: []
@@ -29,9 +29,9 @@ export const ReportWizard = {
     this.currentStep = 1;
     this.currentCaptcha = Security.generateMathCaptcha();
     const municipality = store.getCurrentMunicipality();
-    this.formData.lat = municipality.centerLat;
-    this.formData.lng = municipality.centerLng;
-    this.formData.address = municipality.name;
+    this.formData.lat = municipality.centerLat || 38.0623;
+    this.formData.lng = municipality.centerLng || -6.6466;
+    this.formData.address = 'Cumbres Mayores (Huelva)';
     this.formData.images = [];
 
     this.render(containerId);
@@ -67,8 +67,8 @@ export const ReportWizard = {
 
         <!-- Step 1: Detectar (Categoría y Urgencia) -->
         <div class="wizard-step-pane ${this.currentStep === 1 ? 'active' : ''}" id="wizard-step-1">
-          <h3 style="margin-bottom: 0.5rem;">Paso 1: ¿Qué tipo de incidencia has detectado?</h3>
-          <p style="margin-bottom: 1.25rem; font-size: 0.9rem;">Selecciona la categoría que mejor describa la situación para dirigirla al equipo técnico adecuado.</p>
+          <h3 style="margin-bottom: 0.5rem;">Paso 1: ¿Qué tipo de incidencia has detectado en Cumbres Mayores?</h3>
+          <p style="margin-bottom: 1.25rem; font-size: 0.9rem;">Selecciona la categoría para dirigir el aviso directamente al operario o departamento correspondiente.</p>
           
           <div class="category-grid" style="margin-bottom: 1.5rem;">
             ${categories.map(cat => `
@@ -94,21 +94,21 @@ export const ReportWizard = {
 
           <div style="display: flex; justify-content: flex-end; margin-top: 1.5rem;">
             <button type="button" class="btn btn-primary btn-lg" onclick="CivitasApp.wizard.nextStep()">
-              Siguiente: Ubicar en el Mapa &rarr;
+              Siguiente: Ubicar en el Plano &rarr;
             </button>
           </div>
         </div>
 
         <!-- Step 2: Ubicar (GPS & Mapa) -->
         <div class="wizard-step-pane ${this.currentStep === 2 ? 'active' : ''}" id="wizard-step-2">
-          <h3 style="margin-bottom: 0.5rem;">Paso 2: ¿Dónde se encuentra la incidencia?</h3>
-          <p style="margin-bottom: 1rem; font-size: 0.9rem;">Usa tu ubicación actual con un clic o arrastra el marcador sobre el mapa.</p>
+          <h3 style="margin-bottom: 0.5rem;">Paso 2: ¿Dónde se localiza la incidencia?</h3>
+          <p style="margin-bottom: 1rem; font-size: 0.9rem;">Usa tu ubicación actual con un clic o marca el punto en las calles o senderos de Cumbres Mayores.</p>
 
           <div style="display: flex; gap: 0.75rem; margin-bottom: 1rem;">
             <button type="button" class="btn btn-secondary" onclick="CivitasApp.wizard.requestGeolocation()">
               📍 Usar Mi Ubicación GPS Actual
             </button>
-            <input type="text" id="wizard-address-input" class="form-control" placeholder="Dirección o punto de referencia..." 
+            <input type="text" id="wizard-address-input" class="form-control" placeholder="Ej: Calle La Portá, 12 o Castillo de Sancho IV..." 
                    value="${this.formData.address}" oninput="CivitasApp.wizard.formData.address = this.value" />
           </div>
 
@@ -126,18 +126,18 @@ export const ReportWizard = {
 
         <!-- Step 3: Informar (Detalles, Fotos & Captcha) -->
         <div class="wizard-step-pane ${this.currentStep === 3 ? 'active' : ''}" id="wizard-step-3">
-          <h3 style="margin-bottom: 0.5rem;">Paso 3: Describe los detalles y adjunta fotos</h3>
-          <p style="margin-bottom: 1.25rem; font-size: 0.9rem;">Una descripción clara y una fotografía ayudan a resolver el problema mucho más rápido.</p>
+          <h3 style="margin-bottom: 0.5rem;">Paso 3: Describe los detalles y adjunta fotografías</h3>
+          <p style="margin-bottom: 1.25rem; font-size: 0.9rem;">Una descripción clara y una fotografía facilitan el desplazamiento inmediato de los servicios municipales.</p>
 
           <div class="form-group">
             <label class="form-label" for="wizard-title">Título breve <span class="required">*</span></label>
-            <input type="text" id="wizard-title" class="form-control" placeholder="Ej: Rotura de tubería con fuga de agua en acera" 
+            <input type="text" id="wizard-title" class="form-control" placeholder="Ej: Adoquín suelto en Calle La Portá frente a la farmacia" 
                    value="${this.formData.title}" oninput="CivitasApp.wizard.formData.title = this.value" required />
           </div>
 
           <div class="form-group">
             <label class="form-label" for="wizard-desc">Descripción detallada <span class="required">*</span></label>
-            <textarea id="wizard-desc" class="form-control" placeholder="Explica la situación, peligros o detalles relevantes..." 
+            <textarea id="wizard-desc" class="form-control" placeholder="Indica detalles para localizar la avería, posibles riesgos o vehículos afectados..." 
                       oninput="CivitasApp.wizard.formData.description = this.value" required>${this.formData.description}</textarea>
           </div>
 
@@ -163,8 +163,8 @@ export const ReportWizard = {
 
           <!-- Anti-bot Math Captcha & Honeypot -->
           <div style="background-color: var(--bg-surface-subtle); padding: 1rem; border-radius: var(--civ-radius-md); border: 1px solid var(--border-subtle); margin: 1.5rem 0;">
-            <label class="form-label" for="wizard-captcha">Seguridad Anti-Bot: ${this.currentCaptcha.question} <span class="required">*</span></label>
-            <input type="number" id="wizard-captcha" class="form-control" style="max-width: 140px;" placeholder="Tu respuesta" required />
+            <label class="form-label" for="wizard-captcha">Verificación de Seguridad: ${this.currentCaptcha.question} <span class="required">*</span></label>
+            <input type="number" id="wizard-captcha" class="form-control" style="max-width: 140px;" placeholder="Respuesta" required />
             <input type="text" id="wizard-honeypot" style="display: none;" tabindex="-1" autocomplete="off" />
           </div>
 
@@ -179,19 +179,19 @@ export const ReportWizard = {
         <!-- Step 4: Seguir (Éxito & Seguimiento) -->
         <div class="wizard-step-pane ${this.currentStep === 4 ? 'active' : ''}" id="wizard-step-4">
           <div style="text-align: center; padding: 2rem 1rem;">
-            <div style="font-size: 3.5rem; margin-bottom: 1rem;">🎉</div>
-            <h2 style="color: var(--civ-emerald-600); margin-bottom: 0.5rem;">¡Incidencia Registrada con Éxito!</h2>
-            <p style="margin-bottom: 1.5rem;">Tu comunicación ha sido enviada al departamento competente del Ayuntamiento.</p>
+            <div style="font-size: 3.5rem; margin-bottom: 1rem;">🏰</div>
+            <h2 style="color: var(--civ-emerald-600); margin-bottom: 0.5rem;">¡Incidencia Registrada en el Ayuntamiento!</h2>
+            <p style="margin-bottom: 1.5rem;">Tu aviso ha sido asignado a los servicios municipales de Cumbres Mayores.</p>
 
             <div style="background-color: var(--bg-surface-subtle); border: 2px dashed var(--brand-primary); border-radius: var(--civ-radius-lg); padding: 1.5rem; max-width: 420px; margin: 0 auto 2rem;">
-              <span style="font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">Código Único de Seguimiento</span>
+              <span style="font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">Código de Seguimiento Municipal</span>
               <div style="font-size: 1.8rem; font-weight: 800; color: var(--brand-primary); letter-spacing: 0.05em; margin: 0.5rem 0;" id="wizard-success-code">-</div>
-              <p style="font-size: 0.8rem; color: var(--text-secondary);">Guarda este código para consultar la evolución y actuaciones de los operarios.</p>
+              <p style="font-size: 0.8rem; color: var(--text-secondary);">Guarda este código para consultar el estado y la resolución por parte de los operarios.</p>
             </div>
 
             <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
               <button type="button" class="btn btn-primary" onclick="CivitasApp.navigateTo('incidents')">
-                📋 Ver Mis Incidencias
+                📋 Ver Mis Avisos
               </button>
               <button type="button" class="btn btn-secondary" onclick="CivitasApp.wizard.init()">
                 ➕ Reportar Otra Incidencia
@@ -272,7 +272,7 @@ export const ReportWizard = {
 
   requestGeolocation() {
     if ('geolocation' in navigator) {
-      NotificationService.showToast('Localizando...', 'Obteniendo coordenadas GPS de tu dispositivo', 'info');
+      NotificationService.showToast('Localizando...', 'Obteniendo GPS de tu dispositivo en Cumbres Mayores', 'info');
       navigator.geolocation.getCurrentPosition(
         (pos) => {
           this.formData.lat = pos.coords.latitude;
@@ -284,12 +284,12 @@ export const ReportWizard = {
           this.formData.address = `GPS: ${this.formData.lat.toFixed(5)}, ${this.formData.lng.toFixed(5)}`;
           const addrInput = document.getElementById('wizard-address-input');
           if (addrInput) addrInput.value = this.formData.address;
-          NotificationService.showToast('Ubicación Detectada', 'Se ha fijado el punto GPS en el mapa', 'success');
+          NotificationService.showToast('Ubicación Detectada', 'Punto GPS fijado con éxito', 'success');
           this.checkForDuplicates();
         },
         (err) => {
           console.warn('Geolocation error', err);
-          NotificationService.showToast('Aviso de Ubicación', 'No se pudo acceder al GPS. Puedes marcar el punto manualmente.', 'warning');
+          NotificationService.showToast('Aviso GPS', 'Puedes marcar el punto en el mapa de Cumbres Mayores manualmente.', 'warning');
         },
         { enableHighAccuracy: true, timeout: 6000 }
       );
@@ -308,8 +308,8 @@ export const ReportWizard = {
         <div class="duplicate-alert-banner">
           <div style="font-size: 1.75rem;">⚠️</div>
           <div style="flex: 1;">
-            <strong style="color: var(--civ-amber-600); font-size: 0.95rem;">Posible incidencia duplicada detectada</strong>
-            <p style="font-size: 0.85rem; margin: 0.25rem 0;">Ya existe un aviso muy similar a ${duplicates[0].distanceMeters}m: <strong>"${topMatch.title}"</strong> (${topMatch.trackingCode}).</p>
+            <strong style="color: var(--civ-amber-600); font-size: 0.95rem;">Posible incidencia similar ya comunicada</strong>
+            <p style="font-size: 0.85rem; margin: 0.25rem 0;">Ya existe un reporte cercano a ${duplicates[0].distanceMeters}m: <strong>"${topMatch.title}"</strong> (${topMatch.trackingCode}).</p>
             <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
               <button type="button" class="btn btn-sm btn-primary" onclick="CivitasApp.wizard.joinExistingIncident('${topMatch.id}')">
                 👍 Sumarme a este aviso ("A mí también me afecta")
@@ -375,14 +375,13 @@ export const ReportWizard = {
       return;
     }
 
-    // Anti-bot validations
     if (honeypotInput && !Security.verifyHoneypot(honeypotInput.value)) {
       console.warn('Bot detected via honeypot');
       return;
     }
 
     if (!captchaInput || parseInt(captchaInput.value, 10) !== this.currentCaptcha.expectedAnswer) {
-      NotificationService.showToast('Verificación Incorrecta', 'Por favor, resuelve correctamente la pregunta anti-bot', 'error');
+      NotificationService.showToast('Verificación Incorrecta', 'Por favor, resuelve la pregunta anti-bot', 'error');
       this.currentCaptcha = Security.generateMathCaptcha();
       this.render('report-wizard-container');
       return;

@@ -1,6 +1,6 @@
 /**
- * CIVITAS - Master Application Controller
- * Handles SPA routing, UI state, Role & Municipality switching, Theme, PWA & Accessibility
+ * CIVITAS / AYUNTAMIENTO DE CUMBRES MAYORES
+ * Master Application Controller
  */
 
 import { store } from './state/store.js';
@@ -35,7 +35,7 @@ class CivitasAppController {
   }
 
   init() {
-    console.log('🚀 Inicializando Civitas Civic Platform...');
+    console.log('🏰 Inicializando App del Ayuntamiento de Cumbres Mayores (Huelva)...');
 
     // 1. Initialize Theme
     this.initTheme();
@@ -46,16 +46,16 @@ class CivitasAppController {
     // 3. Register Service Worker for PWA
     this.registerServiceWorker();
 
-    // 4. Populate Municipality Dropdown & Current User in Header
+    // 4. Render User and Header
     this.renderHeaderControls();
 
-    // 5. Setup Store Listener for Reactive UI updates
+    // 5. Store Listener
     store.subscribe(() => {
       this.renderHeaderControls();
       this.renderCurrentView();
     });
 
-    // 6. Setup Keyboard Listeners (ESC to close modals, skip-link focus)
+    // 6. Keyboard Accessibility Listeners
     this.setupAccessibilityListeners();
 
     // 7. Initial Route Navigation
@@ -98,16 +98,6 @@ class CivitasAppController {
   // --- Header & Role Controls ---
   renderHeaderControls() {
     const currentUser = store.getState().currentUser;
-    const municipalities = store.getState().municipalities;
-    const currentMunId = store.getState().currentMunicipalityId;
-
-    // Municipality selector
-    const munSelect = document.getElementById('header-municipality-select');
-    if (munSelect) {
-      munSelect.innerHTML = municipalities.map(m => `
-        <option value="${m.id}" ${m.id === currentMunId ? 'selected' : ''}>🏛️ ${m.name}</option>
-      `).join('');
-    }
 
     // Role Pills in Top Dev Bar
     document.querySelectorAll('.role-pill').forEach(pill => {
@@ -123,14 +113,14 @@ class CivitasAppController {
     const userBadge = document.getElementById('header-user-badge');
     if (userBadge && currentUser) {
       const roleLabels = {
-        ROLE_CITIZEN: 'Ciudadano',
-        ROLE_EMPLOYEE: 'Operario Técnico',
-        ROLE_MUNICIPAL_ADMIN: 'Admin Municipal',
+        ROLE_CITIZEN: 'Vecino/a',
+        ROLE_EMPLOYEE: 'Operario Municipal',
+        ROLE_MUNICIPAL_ADMIN: 'Concejalía / Obras',
         ROLE_SUPERADMIN: 'SuperAdmin'
       };
       userBadge.innerHTML = `
         <div style="display: flex; align-items: center; gap: 0.5rem;">
-          <img src="${currentUser.avatar}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1.5px solid var(--brand-primary);" alt="Avatar" />
+          <img src="${currentUser.avatar}" style="width: 34px; height: 34px; border-radius: 50%; object-fit: cover; border: 2px solid var(--brand-primary);" alt="Avatar" />
           <div style="text-align: right; line-height: 1.15; display: none; sm-display: block;">
             <div style="font-size: 0.825rem; font-weight: 700;">${currentUser.name.split(' ')[0]}</div>
             <div style="font-size: 0.7rem; color: var(--text-muted);">${roleLabels[currentUser.role] || currentUser.role}</div>
@@ -147,12 +137,6 @@ class CivitasAppController {
     }
   }
 
-  onMunicipalityChange(newMunId) {
-    store.setState({ currentMunicipalityId: newMunId });
-    const mun = store.getCurrentMunicipality();
-    NotificationService.showToast('Municipio Cambiado', `Conectado a ${mun.name}`, 'info');
-  }
-
   switchRole(roleName) {
     const user = AuthService.switchPersona(roleName);
     NotificationService.showToast('Perfil Cambiado', `Ahora navegas como: ${user.name} (${roleName})`, 'success');
@@ -163,7 +147,6 @@ class CivitasAppController {
     this.currentRoute = route;
     window.location.hash = route;
 
-    // Update active nav styling
     document.querySelectorAll('.nav-link, .bottom-nav-item').forEach(link => {
       if (link.getAttribute('data-route') === route) {
         link.classList.add('active');
@@ -215,30 +198,29 @@ class CivitasAppController {
   renderHomeView(container) {
     const municipality = store.getCurrentMunicipality();
     const activeIncidents = store.getIncidents().slice(0, 3);
-    const topSuggestions = store.getSuggestions().slice(0, 2);
 
     container.innerHTML = `
       <!-- Hero Banner -->
       <section class="hero-banner">
         <div class="hero-content">
-          <div style="display: inline-flex; align-items: center; gap: 0.5rem; background-color: var(--brand-primary-light); color: var(--brand-primary); padding: 0.3rem 0.8rem; border-radius: var(--civ-radius-full); font-size: 0.8rem; font-weight: 700; margin-bottom: 1rem;">
-            🏛️ Ayuntamiento de ${municipality.name}
+          <div style="display: inline-flex; align-items: center; gap: 0.5rem; background-color: var(--brand-primary-light); color: var(--brand-primary); padding: 0.35rem 0.85rem; border-radius: var(--civ-radius-full); font-size: 0.8rem; font-weight: 700; margin-bottom: 1rem;">
+            🏰 Ayuntamiento de Cumbres Mayores (Huelva) — Sierra de Aracena
           </div>
-          <h1 class="hero-title">Tu voz transforma el municipio. Reporta, participa y decide.</h1>
-          <p class="hero-subtitle">Comunica averías e incidencias en la vía pública en 4 sencillos pasos y sigue en tiempo real las reparaciones de los servicios municipales.</p>
+          <h1 class="hero-title">Cuidemos juntos de Cumbres Mayores. Comunica, participa y mejora nuestro pueblo.</h1>
+          <p class="hero-subtitle">Informa de averías en calles, farolas, senderos del Parque Natural y dehesas comunales en 4 sencillos pasos. Sigue en tiempo real las actuaciones de los operarios municipales.</p>
           
           <div class="hero-actions">
             <button type="button" class="btn btn-primary btn-lg" onclick="CivitasApp.navigateTo('report')">
-              📢 Reportar Incidencia Ahora
+              📢 Reportar Incidencia
             </button>
             <button type="button" class="btn btn-secondary btn-lg" onclick="CivitasApp.navigateTo('map')">
-              🗺️ Ver Mapa Interactivo
+              🗺️ Ver Plano Municipal
             </button>
           </div>
 
           <div class="hero-steps">
             <div class="hero-step-item"><div class="hero-step-num">1</div> Detectar</div>
-            <div class="hero-step-item"><div class="hero-step-num">2</div> Ubicar</div>
+            <div class="hero-step-item"><div class="hero-step-num">2</div> Ubicar (GPS)</div>
             <div class="hero-step-item"><div class="hero-step-num">3</div> Informar</div>
             <div class="hero-step-item"><div class="hero-step-num">4</div> Seguir</div>
           </div>
@@ -247,7 +229,7 @@ class CivitasAppController {
 
       <!-- Recent Incidents Feed Preview -->
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
-        <h3>Últimas Incidencias en ${municipality.name}</h3>
+        <h3>Avisos e Incidencias Recientes en Cumbres Mayores</h3>
         <button class="btn btn-outline btn-sm" onclick="CivitasApp.navigateTo('incidents')">Ver Todas &rarr;</button>
       </div>
 
@@ -259,9 +241,9 @@ class CivitasAppController {
       <div class="card" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(99, 102, 241, 0.08) 100%); border-color: var(--civ-emerald-500); padding: 1.75rem; margin-bottom: 2rem;">
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
           <div>
-            <span class="badge" style="background-color: var(--civ-emerald-100); color: var(--civ-emerald-700); margin-bottom: 0.5rem;">Presupuestos Participativos 2026</span>
-            <h2>¿Tienes una propuesta de mejora para el pueblo?</h2>
-            <p>Vota proyectos vecinales y propón nuevas ideas de inversión para el próximo pleno.</p>
+            <span class="badge" style="background-color: var(--civ-emerald-100); color: var(--civ-emerald-700); margin-bottom: 0.5rem;">Presupuestos Participativos Cumbres Mayores</span>
+            <h2>¿Tienes una propuesta para mejorar el pueblo o la dehesa?</h2>
+            <p>Vota proyectos vecinales y propón mejoras de patrimonio, sendas e infraestructuras para el próximo Pleno Municipal.</p>
           </div>
           <button class="btn btn-emerald btn-lg" onclick="CivitasApp.navigateTo('suggestions')">
             💡 Ver y Votar Propuestas
@@ -277,8 +259,8 @@ class CivitasAppController {
     container.innerHTML = `
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.75rem;">
         <div>
-          <h2>Mapa Urbano de Incidencias</h2>
-          <p style="font-size: 0.875rem;">Visualización geoespacial en tiempo real de actuaciones y avisos vecinales.</p>
+          <h2>Plano Municipal de Incidencias — Cumbres Mayores</h2>
+          <p style="font-size: 0.875rem;">Visualización geoespacial de incidencias en el casco urbano, Castillo de Sancho IV y sendero GR-48.</p>
         </div>
         <div style="display: flex; gap: 0.5rem;">
           <button class="btn btn-secondary btn-sm" id="btn-toggle-heat" onclick="CivitasApp.toggleMapHeatmap()">
@@ -297,7 +279,7 @@ class CivitasAppController {
 
         <div class="map-sidebar">
           <div class="map-sidebar-header">
-            <h4 style="font-size: 0.95rem; margin-bottom: 0.5rem;">Filtros de Mapa</h4>
+            <h4 style="font-size: 0.95rem; margin-bottom: 0.5rem;">Filtros de Categoría</h4>
             <select id="map-category-filter" class="form-control" onchange="CivitasApp.filterMapIncidents(this.value)" style="padding: 0.4rem 0.75rem; font-size: 0.85rem;">
               <option value="all">Todas las Categorías</option>
               ${categories.map(c => `<option value="${c.id}">${c.icon} ${c.name}</option>`).join('')}
@@ -320,7 +302,7 @@ class CivitasAppController {
     `;
 
     setTimeout(() => {
-      MapComponent.init('map');
+      MapComponent.init('map', { lat: 38.0623, lng: -6.6466, zoom: 16 });
     }, 50);
   }
 
@@ -353,8 +335,8 @@ class CivitasAppController {
     container.innerHTML = `
       <div class="feed-header-bar">
         <div>
-          <h2>Explorador de Incidencias</h2>
-          <p style="font-size: 0.9rem;">Consulta la evolución, aporta información y súmate a incidencias activas.</p>
+          <h2>Explorador de Incidencias de Cumbres Mayores</h2>
+          <p style="font-size: 0.9rem;">Consulta la evolución, aporta fotos adicionales y súmate a incidencias activas.</p>
         </div>
         <button class="btn btn-primary" onclick="CivitasApp.navigateTo('report')">
           ➕ Comunicar Nueva Incidencia
@@ -366,7 +348,7 @@ class CivitasAppController {
         <div class="filter-group">
           <div class="input-icon-wrapper" style="flex: 1; min-width: 220px;">
             <span class="input-icon">🔍</span>
-            <input type="text" class="form-control" placeholder="Buscar por código, calle o descripción..." 
+            <input type="text" class="form-control" placeholder="Buscar por calle (Ej: Calle La Portá, Castillo...)" 
                    value="${this.incidentFilters.search}" oninput="CivitasApp.applyIncidentFilter('search', this.value)" />
           </div>
 
@@ -392,8 +374,8 @@ class CivitasAppController {
         ${filtered.length === 0 ? `
           <div class="card" style="grid-column: 1 / -1; text-align: center; padding: 3rem 1rem;">
             <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🔍</div>
-            <h3>No se encontraron incidencias</h3>
-            <p>Prueba a cambiar los filtros o los términos de búsqueda.</p>
+            <h3>No se encontraron avisos con esos filtros</h3>
+            <p>Prueba a cambiar la búsqueda o categoría.</p>
           </div>
         ` : filtered.map(inc => this.renderIncidentCard(inc)).join('')}
       </div>
@@ -426,7 +408,7 @@ class CivitasAppController {
     this.renderIncidentsView(document.getElementById('main-content-area'));
   }
 
-  // --- Modal Management & Detail Views ---
+  // --- Modal Detail Views ---
   openIncidentDetail(incidentId) {
     const incident = store.getState().incidents.find(i => i.id === incidentId);
     if (!incident) return;
@@ -450,7 +432,7 @@ class CivitasAppController {
       <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.25rem; font-size: 0.85rem; color: var(--text-muted);">
         <div>📍 <strong>Ubicación:</strong> ${incident.address}</div>
         <div>⚡ <strong>Urgencia:</strong> <span class="badge priority-${incident.urgency}">${incident.urgency}</span></div>
-        <div>👥 <strong>Ciudadanos afectados:</strong> ${incident.adherentsCount}</div>
+        <div>👥 <strong>Vecinos afectados:</strong> ${incident.adherentsCount}</div>
       </div>
 
       ${incident.images && incident.images.length ? `
@@ -466,7 +448,7 @@ class CivitasAppController {
 
       ${incident.resolutionNotes ? `
         <div style="background-color: var(--status-resolved-bg); border-left: 4px solid var(--civ-emerald-600); padding: 1rem; border-radius: 0 var(--civ-radius-md) var(--civ-radius-md) 0; margin-bottom: 1.5rem;">
-          <h4 style="color: var(--civ-emerald-700); font-size: 0.95rem; margin-bottom: 0.25rem;">✅ Resolución Municipal:</h4>
+          <h4 style="color: var(--civ-emerald-700); font-size: 0.95rem; margin-bottom: 0.25rem;">✅ Resolución por los Servicios Municipales:</h4>
           <p style="font-size: 0.9rem; color: var(--text-primary);">${incident.resolutionNotes}</p>
           ${incident.resolutionImages && incident.resolutionImages.length ? `
             <div style="margin-top: 0.5rem; display: flex; gap: 0.5rem;">
@@ -478,8 +460,8 @@ class CivitasAppController {
         </div>
       ` : ''}
 
-      <!-- Timeline of Status Updates -->
-      <h4 style="font-size: 0.95rem; margin-bottom: 0.5rem;">Evolución y Actuaciones Técnicas:</h4>
+      <!-- Timeline -->
+      <h4 style="font-size: 0.95rem; margin-bottom: 0.5rem;">Evolución y Actuaciones de los Operarios:</h4>
       <div class="timeline">
         ${(incident.history || []).map((h, idx) => `
           <div class="timeline-item ${idx === incident.history.length - 1 ? 'active' : 'completed'}">
@@ -536,11 +518,11 @@ class CivitasAppController {
     }
   }
 
-  // --- Service Worker for PWA ---
+  // --- PWA Service Worker ---
   registerServiceWorker() {
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('./sw.js')
-        .then(reg => console.log('✅ ServiceWorker registrado con éxito para Civitas PWA', reg.scope))
+        .then(reg => console.log('✅ ServiceWorker de Cumbres Mayores registrado', reg.scope))
         .catch(err => console.warn('Aviso: ServiceWorker no registrado (posible entorno local)', err));
     }
   }
@@ -549,7 +531,6 @@ class CivitasAppController {
 export const CivitasApp = new CivitasAppController();
 window.CivitasApp = CivitasApp;
 
-// Auto-boot on DOM ready
 document.addEventListener('DOMContentLoaded', () => {
   CivitasApp.init();
 });

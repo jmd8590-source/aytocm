@@ -1,16 +1,16 @@
 /**
- * CIVITAS - Utility Helpers
+ * AYTO CUMBRES MAYORES - Utility Helpers
  * Date formatting, Haversine geo-distance, debounce, ID generator
  */
 
 export const Helpers = {
   /**
-   * Generates unique tracking code like CIV-2026-87421
+   * Generates unique municipal tracking code like CM-2026-87421
    */
   generateTrackingCode() {
     const year = new Date().getFullYear();
     const random = Math.floor(10000 + Math.random() * 90000);
-    return `CIV-${year}-${random}`;
+    return `CM-${year}-${random}`;
   },
 
   /**
