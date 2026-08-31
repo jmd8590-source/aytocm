@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="es" data-theme="light">
+<html lang="es" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
-  <title>Ayuntamiento de Cumbres Mayores — Plataforma Cívica Municipal</title>
-  <meta name="description" content="Portal oficial del Ayuntamiento de Cumbres Mayores (Huelva) para la comunicación inmediata de incidencias en vías, alumbrado, castillo y dehesas comunales." />
-  <meta name="theme-color" content="#059669" />
+  <title>Ayuntamiento de Cumbres Mayores — Portal Cívico Municipal</title>
+  <meta name="description" content="Portal oficial del Ayuntamiento de Cumbres Mayores (Huelva) para incidencias, patrimonio y presupuestos vecinales." />
+  <meta name="theme-color" content="#FF7A18" />
 
-  <!-- PWA Manifest & Touch Icons -->
+  <!-- PWA Manifest & Icons -->
   <link rel="manifest" href="./manifest.json" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -15,14 +15,14 @@
   <!-- Google Fonts: Plus Jakarta Sans & Outfit -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 
   <!-- Leaflet CSS & JS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
 
-  <!-- Civitas Boutique CSS Architecture -->
+  <!-- Civitas VibeCut Theme Architecture -->
   <link rel="stylesheet" href="./css/variables.css" />
   <link rel="stylesheet" href="./css/base.css" />
   <link rel="stylesheet" href="./css/components.css" />
@@ -31,12 +31,12 @@
 </head>
 <body>
   <!-- Accessibility Skip Link -->
-  <a href="#main-content-area" class="skip-link">Saltar al contenido principal</a>
+  <a href="#workspace-content-area" class="skip-link">Saltar al contenido principal</a>
 
-  <!-- Top Persona / Role Switcher Bar -->
-  <aside class="role-bar" aria-label="Selector de rol de prueba">
-    <div class="role-bar-group">
-      <span>🎭 <strong>Modo Demostración:</strong></span>
+  <!-- Top Persona / Role Switcher Strip -->
+  <aside class="role-bar" style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 1.5rem; background: #0A0503; border-bottom: 1px solid rgba(255, 159, 56, 0.15);">
+    <div class="role-bar-group" style="display: flex; align-items: center; gap: 0.5rem;">
+      <span style="font-size: 0.75rem; color: #A89082;">🎭 <strong>Modo Demo / Rol:</strong></span>
       <button type="button" class="role-pill active" data-role="ROLE_CITIZEN" onclick="CivitasApp.switchRole('ROLE_CITIZEN')">
         🙋 Vecino/a
       </button>
@@ -50,72 +50,116 @@
         ⚡ SuperAdmin
       </button>
     </div>
-    <div class="role-bar-group">
-      <span style="opacity: 0.9; font-size: 0.775rem;">📍 Cumbres Mayores (Huelva) — CP 21380</span>
+    <div style="font-size: 0.75rem; color: var(--vibe-amber-300); font-weight: 600;">
+      📍 Cumbres Mayores (Huelva) — Sierra de Aracena (21380)
     </div>
   </aside>
 
-  <!-- Main Sticky Header -->
-  <header class="app-header" role="banner">
-    <div class="container header-container">
-      <!-- Brand Logo -->
-      <a class="brand" onclick="CivitasApp.navigateTo('home')" aria-label="Ayuntamiento de Cumbres Mayores Inicio">
-        <div class="brand-logo" style="background: linear-gradient(135deg, #059669 0%, #1E3A8A 100%);">
-          🏰
-        </div>
-        <div class="brand-info">
-          <span class="brand-name">Cumbres Mayores</span>
-          <span class="brand-motto">Ayuntamiento de Cumbres Mayores (Huelva)</span>
-        </div>
-      </a>
-
-      <!-- Desktop Navigation -->
-      <nav class="main-nav" role="navigation" aria-label="Navegación principal">
-        <button class="nav-link active" data-route="home" onclick="CivitasApp.navigateTo('home')">
-          🏠 Inicio
-        </button>
-        <button class="nav-link" data-route="report" onclick="CivitasApp.navigateTo('report')">
-          📢 Reportar Incidencia
-        </button>
-        <button class="nav-link" data-route="map" onclick="CivitasApp.navigateTo('map')">
-          🗺️ Plano en Vivo
-        </button>
-        <button class="nav-link" data-route="incidents" onclick="CivitasApp.navigateTo('incidents')">
-          📋 Incidencias
-        </button>
-        <button class="nav-link" data-route="suggestions" onclick="CivitasApp.navigateTo('suggestions')">
-          💡 Presupuestos Vecinales
-        </button>
-        <button class="nav-link" id="nav-link-admin" data-route="admin" onclick="CivitasApp.navigateTo('admin')" style="display: none;">
-          🏛️ Gestión Municipal
-        </button>
-      </nav>
-
-      <!-- Header Action Controls -->
-      <div class="header-actions">
-        <!-- Live Status Pill -->
-        <div class="live-pulse" style="display: none; md-display: inline-flex;">
-          <div class="live-pulse-dot"></div>
-          <span>Servicios Operativos</span>
+  <!-- Master Luxury Floating Dashboard Frame (VibeCut Style) -->
+  <div class="app-shell">
+    <!-- Left Glass Sidebar -->
+    <aside class="app-sidebar" role="navigation" aria-label="Menú principal">
+      <div>
+        <!-- Sidebar Brand -->
+        <div class="sidebar-brand" onclick="CivitasApp.navigateTo('home')">
+          <div class="brand-icon-flame">🏰</div>
+          <div>
+            <div class="sidebar-brand-title">Cumbres Mayores</div>
+            <div class="sidebar-brand-sub">Ayuntamiento Oficial</div>
+          </div>
         </div>
 
-        <!-- Dark / Light Theme Toggle -->
-        <button type="button" id="theme-toggle-btn" class="btn btn-icon btn-secondary" onclick="CivitasApp.toggleTheme()" aria-label="Cambiar tema">
-          🌙
-        </button>
+        <!-- Sidebar Menu Links -->
+        <ul class="sidebar-menu">
+          <li>
+            <button type="button" class="sidebar-link active" data-route="home" onclick="CivitasApp.navigateTo('home')">
+              <span class="sidebar-link-icon">🏠</span>
+              <span>Inicio</span>
+            </button>
+          </li>
+          <li>
+            <button type="button" class="sidebar-link" data-route="report" onclick="CivitasApp.navigateTo('report')">
+              <span class="sidebar-link-icon">📢</span>
+              <span>Reportar Aviso</span>
+            </button>
+          </li>
+          <li>
+            <button type="button" class="sidebar-link" data-route="map" onclick="CivitasApp.navigateTo('map')">
+              <span class="sidebar-link-icon">🗺️</span>
+              <span>Plano Municipal</span>
+            </button>
+          </li>
+          <li>
+            <button type="button" class="sidebar-link" data-route="incidents" onclick="CivitasApp.navigateTo('incidents')">
+              <span class="sidebar-link-icon">📋</span>
+              <span>Incidencias</span>
+            </button>
+          </li>
+          <li>
+            <button type="button" class="sidebar-link" data-route="suggestions" onclick="CivitasApp.navigateTo('suggestions')">
+              <span class="sidebar-link-icon">💡</span>
+              <span>Presupuestos</span>
+            </button>
+          </li>
+          <li id="sidebar-admin-item" style="display: none;">
+            <button type="button" class="sidebar-link" data-route="admin" onclick="CivitasApp.navigateTo('admin')">
+              <span class="sidebar-link-icon">🏛️</span>
+              <span>Gestión Municipal</span>
+            </button>
+          </li>
+          <li>
+            <button type="button" class="sidebar-link" data-route="audit" onclick="CivitasApp.navigateTo('audit')">
+              <span class="sidebar-link-icon">🛡️</span>
+              <span>Auditoría</span>
+            </button>
+          </li>
+        </ul>
+      </div>
 
-        <!-- Current User Profile Pill -->
-        <div id="header-user-badge" style="cursor: pointer;" onclick="CivitasApp.switchRole('ROLE_CITIZEN')">
-          <!-- Populated dynamically -->
+      <!-- Sidebar Bottom Card / Fast Action -->
+      <div>
+        <div class="sidebar-cta-card">
+          <div style="font-size: 1.5rem; margin-bottom: 0.25rem;">✨</div>
+          <div style="font-weight: 800; font-size: 0.85rem; color: #FFFFFF; margin-bottom: 0.2rem;">Participación Activa</div>
+          <p style="font-size: 0.725rem; color: var(--text-muted); margin-bottom: 0.75rem;">Tu aviso ayuda a mantener limpio y seguro nuestro pueblo.</p>
+          <button type="button" class="btn btn-sunset btn-sm" style="width: 100%;" onclick="CivitasApp.navigateTo('report')">
+            + Nuevo Aviso
+          </button>
         </div>
       </div>
-    </div>
-  </header>
+    </aside>
 
-  <!-- Dynamic SPA Main Content -->
-  <main id="main-content-area" class="app-main container" role="main" tabindex="-1">
-    <!-- Rendered dynamically by CivitasApp -->
-  </main>
+    <!-- Right Workspace Area -->
+    <div class="app-workspace">
+      <!-- Top Navigation & Search Bar -->
+      <header class="workspace-topbar">
+        <!-- Search Bar Input (Pill) -->
+        <div class="topbar-search">
+          <span class="topbar-search-icon">🔍</span>
+          <input type="text" placeholder="Buscar por calle, avería, castillo, farolas o sendero..." 
+                 oninput="if(CivitasApp.currentRoute==='incidents'){CivitasApp.applyIncidentFilter('search', this.value)}" />
+        </div>
+
+        <!-- Topbar Profile & Notifications -->
+        <div class="topbar-actions">
+          <div class="live-pulse">
+            <div class="live-pulse-dot"></div>
+            <span>Servicios Activos</span>
+          </div>
+
+          <!-- Current User Profile Avatar Pill -->
+          <div id="header-user-badge" style="cursor: pointer;" onclick="CivitasApp.switchRole('ROLE_CITIZEN')">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+      </header>
+
+      <!-- Dynamic Inner View Workspace -->
+      <main id="workspace-content-area" class="workspace-content" role="main" tabindex="-1">
+        <!-- Injected dynamically by CivitasApp -->
+      </main>
+    </div>
+  </div>
 
   <!-- Mobile Bottom Navigation Bar -->
   <nav class="bottom-nav" aria-label="Navegación móvil">
@@ -161,62 +205,16 @@
         <button type="button" class="btn btn-icon btn-secondary btn-sm" onclick="CivitasApp.closeModal()" aria-label="Cerrar modal">&times;</button>
       </div>
       <div class="modal-body" id="modal-body">
-        <!-- Content injected dynamically -->
+        <!-- Injected dynamically -->
       </div>
       <div class="modal-footer" id="modal-footer">
-        <!-- Footer buttons injected dynamically -->
+        <!-- Injected dynamically -->
       </div>
     </div>
   </div>
 
   <!-- Global Toast Notification Container -->
   <div id="toast-container" aria-live="assertive" aria-atomic="true"></div>
-
-  <!-- App Footer -->
-  <footer class="app-footer" role="contentinfo">
-    <div class="container">
-      <div class="footer-grid">
-        <div class="footer-col">
-          <div style="display: flex; align-items: center; gap: 0.65rem; margin-bottom: 0.85rem;">
-            <div class="brand-logo" style="width: 34px; height: 34px; font-size: 1rem; background: linear-gradient(135deg, #059669 0%, #1E3A8A 100%);">🏰</div>
-            <strong style="font-size: 1.15rem; color: var(--text-primary);">Ayuntamiento de Cumbres Mayores</strong>
-          </div>
-          <p style="font-size: 0.875rem; margin-bottom: 0.85rem; line-height: 1.6;">Plataforma digital para la comunicación directa de averías e incidencias en el casco urbano, senderos rurales y dehesas comunales de la Sierra de Aracena.</p>
-          <div style="font-size: 0.825rem; color: var(--text-muted); line-height: 1.6;">
-            📍 Plaza de España, 1, 21380 Cumbres Mayores (Huelva)<br />
-            📞 Centralita: 959 710 001 / 959 710 026<br />
-            ✉️ Email: ayuntamiento@cumbresmayores.es
-          </div>
-        </div>
-
-        <div class="footer-col">
-          <h4>Servicios Municipales</h4>
-          <ul class="footer-links">
-            <li><a href="#report" onclick="CivitasApp.navigateTo('report')">Comunicar Incidencia en 4 Pasos</a></li>
-            <li><a href="#map" onclick="CivitasApp.navigateTo('map')">Plano de Averías y Actuaciones</a></li>
-            <li><a href="#suggestions" onclick="CivitasApp.navigateTo('suggestions')">Presupuestos y Propuestas Vecinales</a></li>
-            <li><a href="#admin" onclick="CivitasApp.navigateTo('admin')">Panel de Operarios y Concejalía</a></li>
-          </ul>
-        </div>
-
-        <div class="footer-col">
-          <h4>Garantías y Marco Legal</h4>
-          <ul class="footer-links">
-            <li><a href="#audit" onclick="CivitasApp.navigateTo('audit')">Registro de Auditoría y Trazabilidad</a></li>
-            <li><a href="javascript:void(0)" onclick="alert('Privacidad: Datos de carácter personal protegidos y anonimizados conforme a la LOPDGDD y RGPD.')">Política de Privacidad y RGPD</a></li>
-            <li><a href="javascript:void(0)" onclick="alert('Accesibilidad: Diseñado conforme a criterios de accesibilidad WCAG 2.2 nivel AA.')">Declaración de Accesibilidad</a></li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="footer-bottom">
-        <div>&copy; 2026 Ayuntamiento de Cumbres Mayores (Huelva) — Portal Cívico Digital.</div>
-        <div style="display: flex; gap: 1rem; align-items: center;">
-          <span style="font-size: 0.8rem; color: var(--brand-primary); font-weight: 700;">● Sistema Operativo Online</span>
-        </div>
-      </div>
-    </div>
-  </footer>
 
   <!-- App Bootstrap JS -->
   <script type="module" src="./js/app.js"></script>

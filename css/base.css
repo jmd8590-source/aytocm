@@ -1,5 +1,5 @@
 /* ==========================================================================
-   AYUNTAMIENTO DE CUMBRES MAYORES — Base, Ambient Mesh & Reset
+   AYUNTAMIENTO DE CUMBRES MAYORES — Base Styles & Radiant Sunset Atmosphere
    ========================================================================== */
 
 *, *::before, *::after {
@@ -9,7 +9,7 @@
 }
 
 html {
-  font-size: 16px;
+  font-size: 15px;
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
 }
@@ -18,39 +18,46 @@ body {
   font-family: var(--cm-font-sans);
   background-color: var(--bg-app);
   color: var(--text-primary);
-  line-height: 1.55;
+  line-height: 1.5;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  transition: background-color var(--cm-duration-normal) var(--cm-ease-out), color var(--cm-duration-normal) var(--cm-ease-out);
   overflow-x: hidden;
   position: relative;
 }
 
-/* Atmospheric Ambient Mesh Glows (Adds deep visual craft) */
+/* Background Atmosphere — Radiant Sunset Halo on Deep Espresso */
 body::before {
   content: '';
   position: fixed;
-  top: -150px;
-  left: 50%;
-  transform: translateX(-50%);
+  top: -10%;
+  right: -5%;
   width: 900px;
-  height: 450px;
-  background: radial-gradient(ellipse at center, rgba(16, 185, 129, 0.09) 0%, rgba(99, 102, 241, 0.05) 50%, transparent 75%);
+  height: 900px;
+  background: radial-gradient(circle, rgba(255, 122, 24, 0.22) 0%, rgba(217, 72, 15, 0.12) 40%, rgba(13, 7, 4, 0) 70%);
   pointer-events: none;
   z-index: 0;
-  filter: blur(50px);
+  filter: blur(80px);
 }
 
-[data-theme="dark"] body::before {
-  background: radial-gradient(ellipse at center, rgba(16, 185, 129, 0.15) 0%, rgba(79, 70, 229, 0.1) 45%, transparent 75%);
+body::after {
+  content: '';
+  position: fixed;
+  bottom: -15%;
+  left: 10%;
+  width: 800px;
+  height: 800px;
+  background: radial-gradient(circle, rgba(247, 95, 29, 0.15) 0%, rgba(126, 80, 56, 0.08) 45%, rgba(13, 7, 4, 0) 70%);
+  pointer-events: none;
+  z-index: 0;
+  filter: blur(90px);
 }
 
-/* Accessibility: Visible Focus Ring */
+/* Accessibility Focus Indicator */
 :focus-visible {
-  outline: 2px solid var(--border-focus);
+  outline: 2px solid var(--brand-primary);
   outline-offset: 3px;
   border-radius: var(--cm-radius-xs);
 }
@@ -61,11 +68,11 @@ body::before {
   top: -120px;
   left: 1.5rem;
   background: var(--brand-primary);
-  color: white;
+  color: #FFFFFF;
   padding: 0.75rem 1.5rem;
   border-radius: var(--cm-radius-md);
-  font-weight: 700;
-  font-size: 0.9rem;
+  font-weight: 750;
+  font-size: 0.85rem;
   z-index: 99999;
   text-decoration: none;
   box-shadow: var(--shadow-lg);
@@ -85,10 +92,10 @@ h1, h2, h3, h4, h5, h6 {
   letter-spacing: -0.025em;
 }
 
-h1 { font-size: clamp(2rem, 4.5vw, 3rem); font-weight: 800; }
-h2 { font-size: clamp(1.5rem, 3.2vw, 2.15rem); }
-h3 { font-size: clamp(1.2rem, 2.4vw, 1.45rem); }
-h4 { font-size: 1.1rem; }
+h1 { font-size: clamp(1.85rem, 3.8vw, 2.75rem); font-weight: 850; }
+h2 { font-size: clamp(1.4rem, 2.8vw, 1.95rem); }
+h3 { font-size: clamp(1.15rem, 2.2vw, 1.35rem); }
+h4 { font-size: 1.05rem; }
 
 p {
   color: var(--text-secondary);
@@ -114,10 +121,10 @@ button, input, select, textarea {
   color: inherit;
 }
 
-/* Scrollbar */
+/* Custom Luxury Scrollbars */
 ::-webkit-scrollbar {
-  width: 7px;
-  height: 7px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -125,51 +132,39 @@ button, input, select, textarea {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--border-strong);
+  background: var(--vibe-espresso-700);
   border-radius: var(--cm-radius-full);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--cm-navy-500);
-}
-
-/* Layout Container */
-.container {
-  width: 100%;
-  max-width: var(--cm-max-width);
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
-  position: relative;
-  z-index: 1;
+  background: var(--vibe-amber-500);
 }
 
 /* Text Gradients */
 .text-gradient {
-  background: linear-gradient(135deg, #059669 0%, #1E3A8A 100%);
+  background: linear-gradient(135deg, #FFF7F2 0%, #FFBE6B 50%, #FF7A18 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-[data-theme="dark"] .text-gradient {
-  background: linear-gradient(135deg, #34D399 0%, #818CF8 100%);
+.text-gradient-amber {
+  background: linear-gradient(135deg, #FFAE33 0%, #FF7A18 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-/* Pulse Live Dot */
+/* Live Pulse Indicator */
 .live-pulse {
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
-  font-size: 0.775rem;
-  font-weight: 700;
+  font-size: 0.725rem;
+  font-weight: 750;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--brand-primary-text);
   background: var(--brand-primary-light);
-  border: 1px solid var(--brand-primary-glow);
+  border: 1px solid var(--border-subtle);
   padding: 0.25rem 0.65rem;
   border-radius: var(--cm-radius-full);
 }
@@ -180,11 +175,11 @@ button, input, select, textarea {
   border-radius: 50%;
   background-color: var(--brand-primary);
   box-shadow: 0 0 0 0 var(--brand-primary-glow);
-  animation: pulseEffect 2s infinite;
+  animation: pulseAmber 2s infinite;
 }
 
-@keyframes pulseEffect {
-  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-  70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
-  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+@keyframes pulseAmber {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 122, 24, 0.8); }
+  70% { transform: scale(1); box-shadow: 0 0 0 7px rgba(255, 122, 24, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 122, 24, 0); }
 }
