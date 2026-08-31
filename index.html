@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <title>Civitas — Plataforma Municipal de Incidencias y Participación</title>
+  <meta name="description" content="Plataforma cívica municipal para comunicar incidencias urbanas, participar en propuestas vecinales y seguir la actuación del Ayuntamiento." />
+  <meta name="theme-color" content="#4F46E5" />
+
+  <!-- PWA Manifest & Apple Touch -->
+  <link rel="manifest" href="./manifest.json" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+  <!-- Google Fonts: Inter & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Leaflet CSS & JS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <!-- Leaflet Heat plugin -->
+  <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
+
+  <!-- Civitas CSS Architecture -->
+  <link rel="stylesheet" href="./css/variables.css" />
+  <link rel="stylesheet" href="./css/base.css" />
+  <link rel="stylesheet" href="./css/components.css" />
+  <link rel="stylesheet" href="./css/layout.css" />
+  <link rel="stylesheet" href="./css/views.css" />
+</head>
+<body>
+  <!-- Accessibility Skip Link -->
+  <a href="#main-content-area" class="skip-link">Saltar al contenido principal</a>
+
+  <!-- Top Persona / Role Switcher Bar (For testing all personas immediately) -->
+  <aside class="role-bar" aria-label="Selector de rol de prueba">
+    <div class="role-bar-group">
+      <span>🎭 <strong>Modo Demostración / Rol:</strong></span>
+      <button type="button" class="role-pill active" data-role="ROLE_CITIZEN" onclick="CivitasApp.switchRole('ROLE_CITIZEN')">
+        🙋 Ciudadano
+      </button>
+      <button type="button" class="role-pill" data-role="ROLE_EMPLOYEE" onclick="CivitasApp.switchRole('ROLE_EMPLOYEE')">
+        🛠️ Operario Técnico
+      </button>
+      <button type="button" class="role-pill" data-role="ROLE_MUNICIPAL_ADMIN" onclick="CivitasApp.switchRole('ROLE_MUNICIPAL_ADMIN')">
+        🏛️ Admin Municipal
+      </button>
+      <button type="button" class="role-pill" data-role="ROLE_SUPERADMIN" onclick="CivitasApp.switchRole('ROLE_SUPERADMIN')">
+        ⚡ SuperAdmin
+      </button>
+    </div>
+    <div class="role-bar-group">
+      <span style="opacity: 0.85; font-size: 0.75rem;">Multi-Municipio Activo</span>
+    </div>
+  </aside>
+
+  <!-- Main Sticky Header -->
+  <header class="app-header" role="banner">
+    <div class="container header-container">
+      <!-- Brand Logo -->
+      <a class="brand" onclick="CivitasApp.navigateTo('home')" aria-label="Civitas Inicio">
+        <div class="brand-logo">C</div>
+        <div class="brand-info">
+          <span class="brand-name">Civitas</span>
+          <span class="brand-motto" data-i18n="app_motto">Tu Ayuntamiento más cerca</span>
+        </div>
+      </a>
+
+      <!-- Desktop Navigation -->
+      <nav class="main-nav" role="navigation" aria-label="Navegación principal">
+        <button class="nav-link active" data-route="home" onclick="CivitasApp.navigateTo('home')">
+          🏠 Inicio
+        </button>
+        <button class="nav-link" data-route="report" onclick="CivitasApp.navigateTo('report')">
+          📢 <span data-i18n="nav_report">Reportar</span>
+        </button>
+        <button class="nav-link" data-route="map" onclick="CivitasApp.navigateTo('map')">
+          🗺️ <span data-i18n="nav_map">Mapa</span>
+        </button>
+        <button class="nav-link" data-route="incidents" onclick="CivitasApp.navigateTo('incidents')">
+          📋 <span data-i18n="nav_incidents">Incidencias</span>
+        </button>
+        <button class="nav-link" data-route="suggestions" onclick="CivitasApp.navigateTo('suggestions')">
+          💡 <span data-i18n="nav_suggestions">Propuestas</span>
+        </button>
+        <button class="nav-link" id="nav-link-admin" data-route="admin" onclick="CivitasApp.navigateTo('admin')" style="display: none;">
+          🏛️ <span data-i18n="nav_admin">Gestión Municipal</span>
+        </button>
+      </nav>
+
+      <!-- Header Action Controls -->
+      <div class="header-actions">
+        <!-- Municipality Selector Dropdown -->
+        <select id="header-municipality-select" class="municipality-select" onchange="CivitasApp.onMunicipalityChange(this.value)" aria-label="Seleccionar Municipio">
+          <!-- Populated dynamically -->
+        </select>
+
+        <!-- Dark / Light Theme Toggle -->
+        <button type="button" id="theme-toggle-btn" class="btn btn-icon btn-secondary" onclick="CivitasApp.toggleTheme()" aria-label="Cambiar tema">
+          🌙
+        </button>
+
+        <!-- Current User Avatar Profile -->
+        <div id="header-user-badge" style="cursor: pointer;" onclick="CivitasApp.switchRole('ROLE_CITIZEN')">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Dynamic SPA Main Content -->
+  <main id="main-content-area" class="app-main container" role="main" tabindex="-1">
+    <!-- Rendered dynamically by CivitasApp -->
+  </main>
+
+  <!-- Mobile Bottom Navigation Bar -->
+  <nav class="bottom-nav" aria-label="Navegación móvil">
+    <ul class="bottom-nav-list">
+      <li>
+        <button class="bottom-nav-item active" data-route="home" onclick="CivitasApp.navigateTo('home')">
+          <span>🏠</span>
+          <span>Inicio</span>
+        </button>
+      </li>
+      <li>
+        <button class="bottom-nav-item" data-route="report" onclick="CivitasApp.navigateTo('report')">
+          <span>📢</span>
+          <span>Reportar</span>
+        </button>
+      </li>
+      <li>
+        <button class="bottom-nav-item" data-route="map" onclick="CivitasApp.navigateTo('map')">
+          <span>🗺️</span>
+          <span>Mapa</span>
+        </button>
+      </li>
+      <li>
+        <button class="bottom-nav-item" data-route="incidents" onclick="CivitasApp.navigateTo('incidents')">
+          <span>📋</span>
+          <span>Avisos</span>
+        </button>
+      </li>
+      <li>
+        <button class="bottom-nav-item" data-route="suggestions" onclick="CivitasApp.navigateTo('suggestions')">
+          <span>💡</span>
+          <span>Propuestas</span>
+        </button>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Global Modal Dialog Container -->
+  <div class="modal-backdrop" id="app-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modal-title" style="font-size: 1.15rem;">Detalle de la Incidencia</h3>
+        <button type="button" class="btn btn-icon btn-secondary btn-sm" onclick="CivitasApp.closeModal()" aria-label="Cerrar modal">&times;</button>
+      </div>
+      <div class="modal-body" id="modal-body">
+        <!-- Content injected dynamically -->
+      </div>
+      <div class="modal-footer" id="modal-footer">
+        <!-- Footer buttons injected dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Global Toast Notification Container -->
+  <div id="toast-container" aria-live="assertive" aria-atomic="true"></div>
+
+  <!-- App Footer -->
+  <footer class="app-footer" role="contentinfo">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+            <div class="brand-logo" style="width: 32px; height: 32px; font-size: 1rem;">C</div>
+            <strong style="font-size: 1.2rem; color: var(--text-primary);">Civitas</strong>
+          </div>
+          <p style="font-size: 0.85rem; margin-bottom: 1rem;">Plataforma cívica digital para la gestión transparente de incidencias urbanas y participación ciudadana activa.</p>
+          <div style="font-size: 0.75rem; color: var(--text-muted);">Cumplimiento WCAG 2.2 AA & RGPD</div>
+        </div>
+
+        <div class="footer-col">
+          <h4>Navegación</h4>
+          <ul class="footer-links">
+            <li><a href="#report" onclick="CivitasApp.navigateTo('report')">Comunicar Incidencia</a></li>
+            <li><a href="#map" onclick="CivitasApp.navigateTo('map')">Mapa de Incidencias</a></li>
+            <li><a href="#suggestions" onclick="CivitasApp.navigateTo('suggestions')">Presupuestos Participativos</a></li>
+            <li><a href="#admin" onclick="CivitasApp.navigateTo('admin')">Panel de Administración</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Garantías y Seguridad</h4>
+          <ul class="footer-links">
+            <li><a href="#audit" onclick="CivitasApp.navigateTo('audit')">Registro de Auditoría</a></li>
+            <li><a href="javascript:void(0)" onclick="alert('Privacidad: Datos personales anonimizados en vistas públicas.')">Política de Privacidad RGPD</a></li>
+            <li><a href="javascript:void(0)" onclick="alert('Accesibilidad: Diseñado conforme a criterios WCAG 2.2 nivel AA.')">Declaración de Accesibilidad</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>&copy; 2026 Civitas — Plataforma Municipal de Código Abierto. Todos los derechos reservados.</div>
+        <div style="display: flex; gap: 1rem;">
+          <span style="font-size: 0.8rem; color: var(--civ-emerald-600); font-weight: 600;">● Sistema Operativo Online</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- App Bootstrap JS -->
+  <script type="module" src="./js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,267 @@
+/* ==========================================================================
+   CIVITAS - Layout, Header, Role Switcher Bar & Navigation
+   ========================================================================== */
+
+/* Top Dev Role Bar (Allows seamless persona testing) */
+.role-bar {
+  background: linear-gradient(90deg, #1E1B4B 0%, #312E81 100%);
+  color: #E0E7FF;
+  padding: 0.4rem 1rem;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  z-index: 100;
+}
+
+.role-bar-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.role-pill {
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--civ-radius-full);
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 600;
+  transition: all var(--civ-transition-fast);
+}
+
+.role-pill:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.role-pill.active {
+  background: var(--civ-emerald-500);
+  border-color: var(--civ-emerald-500);
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
+}
+
+/* Header */
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 900;
+  background-color: var(--bg-surface);
+  border-bottom: 1px solid var(--border-subtle);
+  height: var(--civ-header-height);
+  display: flex;
+  align-items: center;
+  transition: background-color var(--civ-transition-normal);
+}
+
+.header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.brand-logo {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, var(--civ-primary-600) 0%, var(--civ-emerald-600) 100%);
+  border-radius: var(--civ-radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 800;
+  font-size: 1.25rem;
+  box-shadow: var(--civ-shadow-md);
+}
+
+.brand-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-name {
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.brand-motto {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* Navigation */
+.main-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.85rem;
+  border-radius: var(--civ-radius-md);
+  color: var(--text-secondary);
+  font-weight: 600;
+  font-size: 0.925rem;
+  transition: all var(--civ-transition-fast);
+  cursor: pointer;
+}
+
+.nav-link:hover {
+  background-color: var(--bg-surface-hover);
+  color: var(--text-primary);
+}
+
+.nav-link.active {
+  background-color: var(--brand-primary-light);
+  color: var(--brand-primary);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* Municipality Picker Dropdown */
+.municipality-select {
+  padding: 0.45rem 0.75rem;
+  border-radius: var(--civ-radius-md);
+  border: 1.5px solid var(--border-subtle);
+  background-color: var(--bg-surface-subtle);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+/* App Main Container */
+.app-main {
+  flex: 1;
+  padding: 1.5rem 0 4rem;
+  min-height: calc(100vh - var(--civ-header-height) - 150px);
+}
+
+/* Mobile Bottom Navigation (Visible on mobile screens) */
+.bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100vw;
+  height: var(--civ-bottom-nav-height);
+  background-color: var(--bg-surface);
+  border-top: 1px solid var(--border-subtle);
+  z-index: 900;
+  box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.bottom-nav-list {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 100%;
+  list-style: none;
+}
+
+.bottom-nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+  color: var(--text-muted);
+  font-size: 0.725rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  padding: 0.35rem 0;
+}
+
+.bottom-nav-item.active {
+  color: var(--brand-primary);
+}
+
+.bottom-nav-item svg {
+  width: 22px;
+  height: 22px;
+}
+
+/* Footer */
+.app-footer {
+  background-color: var(--bg-surface);
+  border-top: 1px solid var(--border-subtle);
+  padding: 2.5rem 0 1.5rem;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.footer-col h4 {
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+  font-size: 1rem;
+}
+
+.footer-links {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.footer-links a {
+  color: var(--text-muted);
+}
+
+.footer-links a:hover {
+  color: var(--brand-primary);
+}
+
+.footer-bottom {
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 900px) {
+  .main-nav {
+    display: none;
+  }
+
+  .bottom-nav {
+    display: block;
+  }
+
+  .app-main {
+    padding-bottom: calc(var(--civ-bottom-nav-height) + 1.5rem);
+  }
+}

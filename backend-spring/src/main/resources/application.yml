@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: civitas-backend
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/civitas_db}
+    username: ${DB_USER:civitas_user}
+    password: ${DB_PASSWORD:civitas_secure_pass}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.spatial.dialect.postgis.PostgisPG95Dialect
+        format_sql: true
+    show-sql: false
+
+server:
+  port: 8080
+  servlet:
+    context-path: /api/v1
+
+civitas:
+  jwt:
+    secret: ${JWT_SECRET:404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}
+    expiration-ms: 86400000 # 24 hours
+  geo:
+    deduplication-radius-meters: 50.0
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method
+  api-docs:
+    path: /api-docs
