@@ -136,7 +136,7 @@ class CivitasAppController {
     const userBadge = document.getElementById('header-user-badge');
     if (userBadge && currentUser) {
       const roleConfig = {
-        ROLE_CITIZEN: { label: 'Vecina de Cumbres', color: '#10B981', border: '#6EE7B7' },
+        ROLE_CITIZEN: { label: 'Vecin@ de Cumbres', color: '#10B981', border: '#6EE7B7' },
         ROLE_EMPLOYEE: { label: 'Operario Municipal', color: '#F59E0B', border: '#FDE68A' },
         ROLE_MUNICIPAL_ADMIN: { label: 'Concejalía / Obras', color: '#FF7A18', border: '#FFD8A8' },
         ROLE_SUPERADMIN: { label: 'SuperAdmin', color: '#8B5CF6', border: '#DDD6FE' }
@@ -583,11 +583,57 @@ class CivitasAppController {
       </div>
     `;
 
+    // --- Admin/Employee Status Change Controls ---
+    const user = store.getState().currentUser;
+    const canChangeStatus = user && [
+      'ROLE_EMPLOYEE', 'ROLE_MUNICIPAL_ADMIN', 'ROLE_SUPERADMIN'
+    ].includes(user.role);
+
+    const statusOptions = [
+      { value: 'recibida',    label: '📩 Recibida',    color: '#6B7280' },
+      { value: 'validando',   label: '🔎 Validando',   color: '#F59E0B' },
+      { value: 'asignada',    label: '📋 Asignada',    color: '#3B82F6' },
+      { value: 'en_proceso',  label: '🔧 En Proceso',  color: '#8B5CF6' },
+      { value: 'resuelta',    label: '✅ Resuelta',    color: '#10B981' },
+      { value: 'cerrada',     label: '🔒 Cerrada',     color: '#EF4444' }
+    ];
+
+    const adminPanel = canChangeStatus ? `
+      <div style="width: 100%; border-top: 1px solid rgba(255,174,51,0.18); padding-top: 1rem; margin-top: 0.5rem;">
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.65rem;">
+          <span style="font-size: 0.8rem; font-weight: 700; color: #FFAE33; text-transform: uppercase; letter-spacing: 0.05em;">⚙️ Gestión Municipal</span>
+          <span style="font-size: 0.7rem; color: #A89082; font-style: italic;">(${user.role.replace('ROLE_', '').replace('_', ' ')})</span>
+        </div>
+        <div style="display: flex; gap: 0.6rem; flex-wrap: wrap; align-items: flex-end;">
+          <div style="flex: 0 0 auto; min-width: 170px;">
+            <label style="font-size: 0.72rem; color: #D4A386; display: block; margin-bottom: 0.25rem; font-weight: 600;">Nuevo Estado</label>
+            <select id="admin-status-select" class="form-control" style="padding: 0.5rem 0.75rem; font-size: 0.85rem; background: rgba(18,10,6,0.95); border: 1.5px solid rgba(255,174,51,0.3);">
+              ${statusOptions.map(s => 
+                '<option value="' + s.value + '"' + (s.value === incident.status ? ' selected' : '') + '>' + s.label + '</option>'
+              ).join('')}
+            </select>
+          </div>
+          <div style="flex: 1; min-width: 200px;">
+            <label style="font-size: 0.72rem; color: #D4A386; display: block; margin-bottom: 0.25rem; font-weight: 600;">Comentario (opcional)</label>
+            <input id="admin-status-comment" type="text" class="form-control" placeholder="Ej: Equipo de fontanería desplazado..." 
+                   style="padding: 0.5rem 0.75rem; font-size: 0.85rem; background: rgba(18,10,6,0.95); border: 1.5px solid rgba(255,174,51,0.3);" />
+          </div>
+          <button class="btn btn-sunset" onclick="CivitasApp.changeIncidentStatus('${incident.id}')" 
+                  style="white-space: nowrap; padding: 0.55rem 1.25rem; font-size: 0.85rem;">
+            💾 Actualizar Estado
+          </button>
+        </div>
+      </div>
+    ` : '';
+
     modalFooter.innerHTML = `
-      <button class="btn btn-secondary" onclick="CivitasApp.closeModal()">Cerrar</button>
-      <button class="btn btn-sunset" onclick="CivitasApp.supportIncidentFromModal('${incident.id}')">
-        👍 A mí también me afecta (${incident.adherentsCount})
-      </button>
+      <div style="display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center; width: 100%;">
+        <button class="btn btn-secondary" onclick="CivitasApp.closeModal()">Cerrar</button>
+        <button class="btn btn-sunset" onclick="CivitasApp.supportIncidentFromModal('${incident.id}')">
+          👍 A mí también me afecta (${incident.adherentsCount})
+        </button>
+      </div>
+      ${adminPanel}
     `;
 
     modalBackdrop.classList.add('active');
@@ -597,6 +643,41 @@ class CivitasAppController {
     IncidentService.addAdherent(incidentId);
     this.openIncidentDetail(incidentId);
     this.renderCurrentView();
+  }
+
+  /**
+   * Changes incident status (Admin / Operario / Concejalía action)
+   */
+  changeIncidentStatus(incidentId) {
+    const selectEl = document.getElementById('admin-status-select');
+    const commentEl = document.getElementById('admin-status-comment');
+    if (!selectEl) return;
+
+    const newStatus = selectEl.value;
+    const comment = commentEl ? commentEl.value.trim() : '';
+
+    const incident = store.getState().incidents.find(i => i.id === incidentId);
+    if (!incident) return;
+
+    // Don't update if same status and no comment
+    if (incident.status === newStatus && !comment) {
+      NotificationService.sendNotification(
+        'Sin Cambios',
+        'Selecciona un estado diferente o añade un comentario para actualizar.'
+      );
+      return;
+    }
+
+    IncidentService.updateStatus(incidentId, newStatus, comment);
+
+    // Re-render modal with updated data and refresh underlying view
+    this.openIncidentDetail(incidentId);
+    this.renderCurrentView();
+
+    NotificationService.sendNotification(
+      '✅ Estado Actualizado',
+      `La incidencia ${incident.trackingCode} ha sido actualizada a: ${newStatus.replace('_', ' ').toUpperCase()}.`
+    );
   }
 
   closeModal() {

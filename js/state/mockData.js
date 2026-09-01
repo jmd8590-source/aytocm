@@ -51,7 +51,7 @@ export const MockData = {
       name: 'María Carmen Márquez',
       email: 'mamen@ciudadano.es',
       role: 'ROLE_CITIZEN',
-      roleBadge: 'Vecina de Cumbres',
+      roleBadge: 'Vecin@ de Cumbres',
       roleColor: '#10B981',
       municipalityId: 'mun-cumbresmayores',
       phone: '+34 622 334 455',
@@ -118,7 +118,7 @@ export const MockData = {
       createdAt: '2026-08-30T08:45:00Z',
       updatedAt: '2026-08-31T09:00:00Z',
       history: [
-        { status: 'recibida', timestamp: '2026-08-30T08:45:00Z', comment: 'Comunicada por vecina de Calle La Portá.' },
+        { status: 'recibida', timestamp: '2026-08-30T08:45:00Z', comment: 'Comunicada por vecin@ de Calle La Portá.' },
         { status: 'validando', timestamp: '2026-08-30T09:30:00Z', comment: 'Inspeccionada por el encargado de obras.' },
         { status: 'asignada', timestamp: '2026-08-30T10:15:00Z', comment: 'Asignada a Manuel Romero (Servicio de Vías y Obras).' },
         { status: 'en_proceso', timestamp: '2026-08-31T09:00:00Z', comment: 'Equipo trabajando en el reasentamiento de adoquines con mortero especial.' }

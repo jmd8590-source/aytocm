@@ -3,7 +3,7 @@
  * Cache First for static assets, Network First with IndexedDB/LocalStorage fallback for data
  */
 
-const CACHE_NAME = 'civitas-cache-v4-vibecut-svg';
+const CACHE_NAME = 'civitas-cache-v5-status-ctrl';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
