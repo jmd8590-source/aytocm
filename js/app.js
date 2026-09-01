@@ -1,6 +1,7 @@
 /**
  * AYUNTAMIENTO DE CUMBRES MAYORES — Master Controller
  * VibeCut Luxury Sunset & Deep Espresso Dashboard Architecture
+ * Iconografía Vectorial SVG Artesanal & Barra de Roles de Alto Contraste
  */
 
 import { store } from './state/store.js';
@@ -12,6 +13,7 @@ import { AuditService } from './services/auditService.js';
 import { I18n } from './utils/i18n.js';
 import { Helpers } from './utils/helpers.js';
 import { Security } from './utils/security.js';
+import { Icons } from './utils/icons.js';
 
 import { MapComponent } from './components/mapComponent.js';
 import { ReportWizard } from './components/reportWizard.js';
@@ -35,35 +37,85 @@ class CivitasAppController {
   }
 
   init() {
-    console.log('🏰 Inicializando Dashboard VibeCut Cumbres Mayores (Huelva)...');
+    console.log('🏰 Inicializando Dashboard Cumbres Mayores (Huelva) con Iconografía Vectorial...');
 
-    // 1. i18n
+    // 1. Inject SVG Defs
+    const defsContainer = document.getElementById('svg-defs-container');
+    if (defsContainer) {
+      defsContainer.innerHTML = Icons.defs;
+    }
+
+    // 2. Populate Static Icons
+    this.populateStaticIcons();
+
+    // 3. i18n
     I18n.init();
 
-    // 2. PWA
+    // 4. PWA
     this.registerServiceWorker();
 
-    // 3. Render User and Header
+    // 5. Render Header & Role controls
     this.renderHeaderControls();
 
-    // 4. Reactive subscription
+    // 6. Reactive subscription
     store.subscribe(() => {
       this.renderHeaderControls();
       this.renderCurrentView();
     });
 
-    // 5. Accessibility Listeners
+    // 7. Accessibility Listeners
     this.setupAccessibilityListeners();
 
-    // 6. Initial Route Navigation
+    // 8. Initial Route Navigation
     const initialRoute = window.location.hash.replace('#', '') || 'home';
     this.navigateTo(initialRoute);
 
-    // 7. Hash change listener
+    // 9. Hash change listener
     window.addEventListener('hashchange', () => {
       const route = window.location.hash.replace('#', '') || 'home';
       this.navigateTo(route);
     });
+  }
+
+  populateStaticIcons() {
+    // Brand Logo
+    const brandLogo = document.getElementById('brand-logo-container');
+    if (brandLogo) brandLogo.innerHTML = Icons.get('castle', 24, '#FFFFFF');
+
+    // Sidebar Icons
+    document.querySelectorAll('.sidebar-link-icon-box').forEach(box => {
+      const iconKey = box.getAttribute('data-icon');
+      if (iconKey) {
+        box.innerHTML = Icons.get(iconKey, 18, '#FFAE33');
+      }
+    });
+
+    // Sidebar CTA Icon
+    const ctaIcon = document.getElementById('sidebar-cta-icon');
+    if (ctaIcon) ctaIcon.innerHTML = Icons.get('bulb', 22, '#FFAE33');
+
+    // Topbar Search Icon
+    const searchIcon = document.getElementById('topbar-search-icon');
+    if (searchIcon) {
+      searchIcon.innerHTML = `
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFAE33" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+      `;
+    }
+
+    // Mobile Navigation Icons
+    const mobHome = document.getElementById('mob-icon-home');
+    if (mobHome) mobHome.innerHTML = Icons.get('home', 20, 'currentColor');
+    const mobReport = document.getElementById('mob-icon-report');
+    if (mobReport) mobReport.innerHTML = Icons.get('report', 20, 'currentColor');
+    const mobMap = document.getElementById('mob-icon-map');
+    if (mobMap) mobMap.innerHTML = Icons.get('map', 20, 'currentColor');
+    const mobInc = document.getElementById('mob-icon-incidents');
+    if (mobInc) mobInc.innerHTML = Icons.get('incidents', 20, 'currentColor');
+    const mobBulb = document.getElementById('mob-icon-bulb');
+    if (mobBulb) mobBulb.innerHTML = Icons.get('bulb', 20, 'currentColor');
   }
 
   // --- Header & Role Controls ---
@@ -80,21 +132,24 @@ class CivitasAppController {
       }
     });
 
-    // Current User Avatar Badge in Topbar
+    // Current User Avatar Badge in Topbar (High-Contrast & Large)
     const userBadge = document.getElementById('header-user-badge');
     if (userBadge && currentUser) {
-      const roleLabels = {
-        ROLE_CITIZEN: 'Vecina',
-        ROLE_EMPLOYEE: 'Operario',
-        ROLE_MUNICIPAL_ADMIN: 'Concejalía',
-        ROLE_SUPERADMIN: 'SuperAdmin'
+      const roleConfig = {
+        ROLE_CITIZEN: { label: 'Vecina de Cumbres', color: '#10B981', border: '#6EE7B7' },
+        ROLE_EMPLOYEE: { label: 'Operario Municipal', color: '#F59E0B', border: '#FDE68A' },
+        ROLE_MUNICIPAL_ADMIN: { label: 'Concejalía / Obras', color: '#FF7A18', border: '#FFD8A8' },
+        ROLE_SUPERADMIN: { label: 'SuperAdmin', color: '#8B5CF6', border: '#DDD6FE' }
       };
+
+      const cfg = roleConfig[currentUser.role] || { label: currentUser.role, color: '#FF7A18', border: '#FFAE33' };
+
       userBadge.innerHTML = `
-        <div style="display: flex; align-items: center; gap: 0.6rem; background: rgba(255, 122, 24, 0.12); padding: 0.3rem 0.75rem; border-radius: var(--cm-radius-full); border: 1px solid rgba(255, 159, 56, 0.3);">
-          <img src="${currentUser.avatar}" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover; border: 1.5px solid var(--brand-primary);" alt="Avatar" />
-          <div style="text-align: left; line-height: 1.15;">
-            <div style="font-size: 0.8rem; font-weight: 800; color: #FFFFFF;">${currentUser.name.split(' ')[0]}</div>
-            <div style="font-size: 0.675rem; color: var(--vibe-amber-300);">${roleLabels[currentUser.role] || currentUser.role}</div>
+        <div style="display: flex; align-items: center; gap: 0.75rem; background: rgba(30, 18, 11, 0.95); padding: 0.35rem 0.95rem 0.35rem 0.45rem; border-radius: var(--cm-radius-full); border: 1.5px solid ${cfg.border}; box-shadow: 0 4px 16px rgba(0,0,0,0.5), 0 0 12px ${cfg.color}40;">
+          <img src="${currentUser.avatar}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 2px solid ${cfg.color};" alt="Avatar" />
+          <div style="text-align: left; line-height: 1.2;">
+            <div style="font-size: 0.85rem; font-weight: 850; color: #FFFFFF; letter-spacing: -0.01em;">${currentUser.name}</div>
+            <div style="font-size: 0.7rem; color: ${cfg.color}; font-weight: 800; text-transform: uppercase;">${cfg.label}</div>
           </div>
         </div>
       `;
@@ -110,7 +165,7 @@ class CivitasAppController {
 
   switchRole(roleName) {
     const user = AuthService.switchPersona(roleName);
-    NotificationService.showToast('Perfil Activo', `Navegando como: ${user.name}`, 'success');
+    NotificationService.showToast('Perfil de Usuario Activo', `Ahora estás operando como: ${user.name}`, 'success');
   }
 
   // --- SPA Router & View Management ---
@@ -167,7 +222,7 @@ class CivitasAppController {
     }
   }
 
-  // --- View Renderers (VibeCut Style) ---
+  // --- View Renderers (VibeCut Style with Vector Icons) ---
   renderHomeView(container) {
     const incidents = store.getIncidents();
     const activeIncidents = incidents.slice(0, 4);
@@ -175,16 +230,17 @@ class CivitasAppController {
     container.innerHTML = `
       <!-- Municipal Bando Ticker -->
       <div class="bando-ticker">
-        <span class="bando-tag">📢 BANDO</span>
+        <span class="bando-tag">📢 BANDO OFICIAL</span>
         <span class="bando-text">Actuaciones de repavimentación en Calle La Portá y subida al Castillo de Sancho IV · Suministro de agua en parámetros normales.</span>
-        <span style="font-size: 0.725rem; color: var(--vibe-amber-300); font-family: var(--cm-font-mono);">Hoy, 09:30</span>
+        <span style="font-size: 0.75rem; color: #FFAE33; font-family: var(--cm-font-mono); font-weight:700;">Hoy, 09:30</span>
       </div>
 
       <!-- VibeCut Radiant Hero Banner -->
       <div class="vibecut-hero">
         <div class="vibecut-hero-content">
           <div class="vibecut-hero-badge">
-            🏰 Portal Oficial · Sierra de Aracena y Picos de Aroche
+            ${Icons.get('castle', 16, '#FFAE33')}
+            <span>Portal Oficial · Sierra de Aracena y Picos de Aroche</span>
           </div>
           <h1 class="vibecut-hero-title">
             Cuidemos juntos de <span class="text-gradient-amber">Cumbres Mayores</span>.
@@ -195,10 +251,12 @@ class CivitasAppController {
 
           <div class="vibecut-hero-actions">
             <button type="button" class="btn btn-sunset btn-lg" onclick="CivitasApp.navigateTo('report')">
-              + Nuevo Reporte de Aviso
+              ${Icons.get('report', 18, '#FFFFFF')}
+              <span>+ Nuevo Reporte de Aviso</span>
             </button>
             <button type="button" class="btn btn-secondary btn-lg" onclick="CivitasApp.navigateTo('map')">
-              🗺️ Explorar Plano en Vivo
+              ${Icons.get('map', 18, '#FFFFFF')}
+              <span>Explorar Plano en Vivo</span>
             </button>
           </div>
         </div>
@@ -207,8 +265,8 @@ class CivitasAppController {
           <div class="hero-preview-thumb">
             <img src="https://images.unsplash.com/photo-1517646287270-a5a9ca602e5c?w=600&auto=format&fit=crop&q=80" alt="Cumbres Mayores" />
             <div class="hero-preview-overlay">
-              <div style="font-weight: 800; font-size: 0.8rem;">Castillo de Sancho IV</div>
-              <div style="font-size: 0.7rem; color: var(--vibe-amber-200);">Actuación de luminarias completada</div>
+              <div style="font-weight: 850; font-size: 0.825rem; color:#FFFFFF;">Castillo de Sancho IV</div>
+              <div style="font-size: 0.725rem; color: var(--vibe-amber-200);">Luminarias LED perimetrales operativas</div>
             </div>
           </div>
         </div>
@@ -240,7 +298,7 @@ class CivitasAppController {
               <img src="https://images.unsplash.com/photo-1584463623578-3012a64703a5?w=150&auto=format&fit=crop&q=80" class="activity-thumb" alt="Calle La Portá" />
               <div class="activity-details">
                 <div class="activity-title">Calle La Portá, 18</div>
-                <div class="activity-sub"><span class="badge status-en_proceso" style="font-size:0.6rem; padding:0.15rem 0.45rem;">En Proceso</span> · Hace 2 h</div>
+                <div class="activity-sub"><span class="badge status-en_proceso" style="font-size:0.65rem; padding:0.2rem 0.5rem;">En Proceso</span> · Hace 2 h</div>
               </div>
             </div>
 
@@ -248,7 +306,7 @@ class CivitasAppController {
               <img src="https://images.unsplash.com/photo-1519331379826-f10be5486c6f?w=150&auto=format&fit=crop&q=80" class="activity-thumb" alt="Paseo Andalucía" />
               <div class="activity-details">
                 <div class="activity-title">Paseo de Andalucía</div>
-                <div class="activity-sub"><span class="badge status-resuelta" style="font-size:0.6rem; padding:0.15rem 0.45rem;">Resuelta</span> · Ayer</div>
+                <div class="activity-sub"><span class="badge status-resuelta" style="font-size:0.65rem; padding:0.2rem 0.5rem;">Resuelta</span> · Ayer</div>
               </div>
             </div>
 
@@ -256,17 +314,19 @@ class CivitasAppController {
               <img src="https://images.unsplash.com/photo-1517646287270-a5a9ca602e5c?w=150&auto=format&fit=crop&q=80" class="activity-thumb" alt="Castillo Sancho IV" />
               <div class="activity-details">
                 <div class="activity-title">Castillo de Sancho IV</div>
-                <div class="activity-sub"><span class="badge status-asignada" style="font-size:0.6rem; padding:0.15rem 0.45rem;">Asignada</span> · Hace 2 días</div>
+                <div class="activity-sub"><span class="badge status-asignada" style="font-size:0.65rem; padding:0.2rem 0.5rem;">Asignada</span> · Hace 2 días</div>
               </div>
             </div>
 
             <!-- Participatory Banner CTA Card -->
-            <div class="card" style="background: linear-gradient(135deg, rgba(255, 122, 24, 0.12) 0%, rgba(38, 22, 14, 0.8) 100%); border-color: rgba(255, 159, 56, 0.3); margin-top: 0.5rem; padding: 1.25rem;">
-              <div style="font-size: 1.5rem; margin-bottom: 0.25rem;">💡</div>
-              <h4 style="font-size: 0.95rem; margin-bottom: 0.25rem; color: #FFFFFF;">Presupuestos Vecinales</h4>
-              <p style="font-size: 0.775rem; color: var(--text-muted); margin-bottom: 0.75rem;">Vota propuestas de mejora para el Castillo y senderos de la Sierra.</p>
+            <div class="card" style="background: linear-gradient(135deg, rgba(255, 122, 24, 0.16) 0%, rgba(38, 22, 14, 0.85) 100%); border-color: rgba(255, 159, 56, 0.35); margin-top: 0.5rem; padding: 1.35rem;">
+              <div class="gem-icon-box gem-sm" style="margin-bottom: 0.65rem;">
+                ${Icons.get('bulb', 20, '#FFAE33')}
+              </div>
+              <h4 style="font-size: 1rem; margin-bottom: 0.35rem; color: #FFFFFF; font-weight:800;">Presupuestos Vecinales 2026</h4>
+              <p style="font-size: 0.8rem; color: #D4A386; margin-bottom: 0.85rem;">Vota propuestas de mejora para el Castillo y senderos de la Sierra.</p>
               <button class="btn btn-outline btn-sm" style="width: 100%;" onclick="CivitasApp.navigateTo('suggestions')">
-                Votar Propuestas &rarr;
+                Votar Propuestas Vecinales &rarr;
               </button>
             </div>
           </div>
@@ -282,7 +342,7 @@ class CivitasAppController {
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.85rem;">
         <div>
           <h2>Plano Municipal Geoespacial — Cumbres Mayores</h2>
-          <p style="font-size: 0.85rem;">Avisos georreferenciados en el casco urbano, Castillo de Sancho IV y sendero GR-48.</p>
+          <p style="font-size: 0.875rem; color:#D4A386;">Avisos georreferenciados en el casco urbano, Castillo de Sancho IV y sendero GR-48.</p>
         </div>
         <div style="display: flex; gap: 0.65rem;">
           <button class="btn btn-secondary btn-sm" id="btn-toggle-heat" onclick="CivitasApp.toggleMapHeatmap()">
@@ -301,10 +361,10 @@ class CivitasAppController {
 
         <div class="map-sidebar">
           <div class="map-sidebar-header">
-            <h4 style="font-size: 0.9rem; margin-bottom: 0.4rem; color:#FFFFFF;">Filtros de Categoría</h4>
-            <select id="map-category-filter" class="form-control" onchange="CivitasApp.filterMapIncidents(this.value)" style="padding: 0.4rem 0.75rem; font-size: 0.825rem;">
+            <h4 style="font-size: 0.95rem; margin-bottom: 0.5rem; color:#FFFFFF; font-weight:800;">Filtros de Categoría</h4>
+            <select id="map-category-filter" class="form-control" onchange="CivitasApp.filterMapIncidents(this.value)" style="padding: 0.45rem 0.85rem; font-size: 0.85rem;">
               <option value="all">Todas las Categorías</option>
-              ${categories.map(c => `<option value="${c.id}">${c.icon} ${c.name}</option>`).join('')}
+              ${categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('')}
             </select>
           </div>
           <div class="map-sidebar-list" id="map-sidebar-incidents">
@@ -312,11 +372,11 @@ class CivitasAppController {
               <div class="activity-item" onclick="CivitasApp.openIncidentDetail('${inc.id}')">
                 <div style="flex:1;">
                   <div style="display: flex; justify-content: space-between; margin-bottom: 0.2rem;">
-                    <strong style="color: var(--brand-primary); font-size:0.75rem; font-family:var(--cm-font-mono);">${inc.trackingCode}</strong>
-                    <span class="badge status-${inc.status}" style="font-size: 0.6rem; padding:0.15rem 0.4rem;">${inc.status.replace('_', ' ')}</span>
+                    <strong style="color: #FFAE33; font-size:0.775rem; font-family:var(--cm-font-mono);">${inc.trackingCode}</strong>
+                    <span class="badge status-${inc.status}" style="font-size: 0.625rem; padding:0.18rem 0.45rem;">${inc.status.replace('_', ' ')}</span>
                   </div>
-                  <div style="font-weight: 750; color: var(--text-primary); font-size:0.825rem; margin-bottom: 0.2rem;">${inc.title}</div>
-                  <div style="color: var(--text-muted); font-size: 0.7rem;">📍 ${inc.address}</div>
+                  <div style="font-weight: 800; color: #FFFFFF; font-size:0.85rem; margin-bottom: 0.2rem;">${inc.title}</div>
+                  <div style="color: #A89082; font-size: 0.725rem;">📍 ${inc.address}</div>
                 </div>
               </div>
             `).join('')}
@@ -360,7 +420,7 @@ class CivitasAppController {
       <div class="feed-header-bar">
         <div>
           <h2>Explorador de Incidencias de Cumbres Mayores</h2>
-          <p style="font-size: 0.875rem;">Consulta la evolución, aporta fotos adicionales y súmate a avisos activos.</p>
+          <p style="font-size: 0.875rem; color:#D4A386;">Consulta la evolución, aporta fotos adicionales y súmate a avisos activos.</p>
         </div>
         <button class="btn btn-sunset" onclick="CivitasApp.navigateTo('report')">
           + Comunicar Nuevo Aviso
@@ -368,7 +428,7 @@ class CivitasAppController {
       </div>
 
       <!-- Filter Toolbar -->
-      <div class="card" style="margin-bottom: 1.5rem; padding: 1rem;">
+      <div class="card" style="margin-bottom: 1.5rem; padding: 1.15rem;">
         <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
           <div class="input-icon-wrapper" style="flex: 1; min-width: 220px;">
             <span class="input-icon">🔍</span>
@@ -378,7 +438,7 @@ class CivitasAppController {
 
           <select class="form-control" style="width: auto; min-width: 180px;" onchange="CivitasApp.applyIncidentFilter('category', this.value)">
             <option value="all" ${this.incidentFilters.category === 'all' ? 'selected' : ''}>Todas las Categorías</option>
-            ${categories.map(c => `<option value="${c.id}" ${this.incidentFilters.category === c.id ? 'selected' : ''}>${c.icon} ${c.name}</option>`).join('')}
+            ${categories.map(c => `<option value="${c.id}" ${this.incidentFilters.category === c.id ? 'selected' : ''}>${c.name}</option>`).join('')}
           </select>
 
           <select class="form-control" style="width: auto; min-width: 160px;" onchange="CivitasApp.applyIncidentFilter('status', this.value)">
@@ -397,9 +457,11 @@ class CivitasAppController {
       <div class="incidents-grid" style="grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));">
         ${filtered.length === 0 ? `
           <div class="card" style="grid-column: 1 / -1; text-align: center; padding: 3rem 1rem;">
-            <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🔍</div>
+            <div class="gem-icon-box gem-lg" style="margin: 0 auto 1rem;">
+              ${Icons.get('incidents', 28, '#FFAE33')}
+            </div>
             <h3>No se encontraron incidencias con esos filtros</h3>
-            <p style="margin-top: 0.25rem;">Prueba a cambiar la búsqueda o categoría.</p>
+            <p style="margin-top: 0.25rem; color:#A89082;">Prueba a cambiar la búsqueda o categoría.</p>
           </div>
         ` : filtered.map(inc => this.renderIncidentCard(inc)).join('')}
       </div>
@@ -414,14 +476,14 @@ class CivitasAppController {
       <div class="incident-card" onclick="CivitasApp.openIncidentDetail('${inc.id}')">
         <img src="${cardImg}" class="incident-card-image" alt="${inc.title}" />
         <div class="incident-meta">
-          <span style="font-size: 0.725rem; font-weight: 750; color: var(--vibe-amber-300); font-family: var(--cm-font-mono);">${inc.trackingCode}</span>
+          <span style="font-size: 0.75rem; font-weight: 800; color: #FFAE33; font-family: var(--cm-font-mono);">${inc.trackingCode}</span>
           <span class="badge status-${inc.status}">${inc.status.replace('_', ' ')}</span>
         </div>
         <h4 class="incident-title">${inc.title}</h4>
         <p class="incident-desc">${inc.description}</p>
         <div class="incident-footer">
           <span>📍 ${inc.address}</span>
-          <span style="font-weight: 750; color: var(--vibe-amber-200);">👥 ${inc.adherentsCount} apoyos</span>
+          <span style="font-weight: 800; color: #FFD8A8;">👥 ${inc.adherentsCount} apoyos</span>
         </div>
       </div>
     `;
@@ -450,16 +512,16 @@ class CivitasAppController {
 
     modalTitle.innerHTML = `
       <div style="display:flex; align-items:center; gap:0.6rem;">
-        <span style="font-family: var(--cm-font-mono); font-weight:800; color:var(--vibe-amber-300);">${incident.trackingCode}</span>
+        <span style="font-family: var(--cm-font-mono); font-weight:850; color:#FFAE33;">${incident.trackingCode}</span>
         <span class="badge status-${incident.status}">${incident.status.replace('_', ' ')}</span>
       </div>
     `;
 
     modalBody.innerHTML = `
-      <h3 style="margin-bottom: 0.5rem; color:#FFFFFF;">${incident.title}</h3>
+      <h3 style="margin-bottom: 0.5rem; color:#FFFFFF; font-weight:800;">${incident.title}</h3>
       <p style="color: var(--text-secondary); margin-bottom: 1.15rem; font-size:0.925rem;">${incident.description}</p>
       
-      <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.25rem; font-size: 0.825rem; color: var(--text-muted); background: rgba(18, 10, 6, 0.8); padding: 0.75rem 1rem; border-radius: var(--cm-radius-md); border: 1px solid var(--border-subtle);">
+      <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.25rem; font-size: 0.85rem; color: #D4A386; background: rgba(18, 10, 6, 0.9); padding: 0.85rem 1rem; border-radius: var(--cm-radius-md); border: 1.5px solid rgba(255, 159, 56, 0.25);">
         <div>📍 <strong>Ubicación:</strong> ${incident.address}</div>
         <div>⚡ <strong>Urgencia:</strong> <span class="badge priority-${incident.urgency}">${incident.urgency}</span></div>
         <div>👥 <strong>Vecinos afectados:</strong> ${incident.adherentsCount}</div>
@@ -470,7 +532,7 @@ class CivitasAppController {
         <div style="margin-bottom: 1.5rem;">
           <h4 style="font-size: 0.95rem; margin-bottom: 0.4rem; color:#FFFFFF; display:flex; align-items:center; justify-content:space-between;">
             <span>📸 Comparativa "Antes y Después"</span>
-            <span style="font-size:0.75rem; color:var(--vibe-amber-300); font-weight:normal;">Arrastra para comparar</span>
+            <span style="font-size:0.75rem; color:#FFAE33; font-weight:700;">Arrastra para comparar</span>
           </h4>
           <div class="before-after-container" id="before-after-box">
             <img src="${incident.resolutionImages[0]}" class="before-after-img" alt="Después de la reparación" />
@@ -490,16 +552,16 @@ class CivitasAppController {
           <h4 style="font-size: 0.9rem; margin-bottom: 0.5rem; color:#FFFFFF;">Fotografías aportadas:</h4>
           <div style="display: flex; gap: 0.6rem; overflow-x: auto;">
             ${incident.images.map(img => `
-              <img src="${img}" style="height: 140px; border-radius: var(--cm-radius-md); object-fit: cover; border: 1px solid var(--border-subtle);" alt="Evidencia" />
+              <img src="${img}" style="height: 140px; border-radius: var(--cm-radius-md); object-fit: cover; border: 1.5px solid rgba(255, 159, 56, 0.25);" alt="Evidencia" />
             `).join('')}
           </div>
         </div>
       ` : '')}
 
       ${incident.resolutionNotes ? `
-        <div style="background-color: rgba(16, 185, 129, 0.14); border-left: 4px solid var(--vibe-emerald); padding: 1rem 1.25rem; border-radius: 0 var(--cm-radius-md) var(--cm-radius-md) 0; margin-bottom: 1.5rem;">
+        <div style="background-color: rgba(16, 185, 129, 0.15); border-left: 4px solid var(--vibe-emerald); padding: 1rem 1.25rem; border-radius: 0 var(--cm-radius-md) var(--cm-radius-md) 0; margin-bottom: 1.5rem;">
           <h4 style="color: var(--vibe-emerald); font-size: 0.95rem; margin-bottom: 0.35rem;">✅ Dictamen y Resolución Municipal:</h4>
-          <p style="font-size: 0.875rem; color: var(--text-primary);">${incident.resolutionNotes}</p>
+          <p style="font-size: 0.875rem; color: #FFFFFF;">${incident.resolutionNotes}</p>
         </div>
       ` : ''}
 
@@ -514,7 +576,7 @@ class CivitasAppController {
                 <span class="badge status-${h.status}" style="font-size: 0.7rem;">${h.status.replace('_', ' ')}</span>
                 <span class="timeline-date">${Helpers.formatDate(h.timestamp)}</span>
               </div>
-              <p style="font-size: 0.85rem; color: var(--text-primary);">${h.comment}</p>
+              <p style="font-size: 0.85rem; color: #FFFFFF;">${h.comment}</p>
             </div>
           </div>
         `).join('')}

@@ -1,7 +1,6 @@
 /**
  * CIVITAS / AYTO CUMBRES MAYORES - Seed Data
- * Datos reales del municipio de Cumbres Mayores (Huelva)
- * Ubicación: Parque Natural Sierra de Aracena y Picos de Aroche (CP: 21380)
+ * Datos reales del municipio de Cumbres Mayores (Huelva) con claves de iconos vectoriales SVG
  */
 
 export const MockData = {
@@ -33,17 +32,17 @@ export const MockData = {
   ],
 
   categories: [
-    { id: 'vias', name: 'Aceras, Empedrado y Asfalto', icon: '🚧', departmentId: 'dep-vias', riskFactor: 3 },
-    { id: 'alumbrado', name: 'Alumbrado y Farolas', icon: '💡', departmentId: 'dep-alumbrado', riskFactor: 3 },
-    { id: 'limpieza', name: 'Limpieza Urbana y Plazas', icon: '🧹', departmentId: 'dep-limpieza', riskFactor: 2 },
-    { id: 'residuos', name: 'Contenedores y Reciclaje', icon: '🗑️', departmentId: 'dep-limpieza', riskFactor: 2 },
-    { id: 'caminos', name: 'Caminos Rurales y Dehesa (GR-48)', icon: '🌿', departmentId: 'dep-medioambiente', riskFactor: 3 },
-    { id: 'patrimonio', name: 'Castillo de Sancho IV y Ermitas', icon: '🏰', departmentId: 'dep-patrimonio', riskFactor: 3 },
-    { id: 'parques', name: 'Paseo de Andalucía y Jardines', icon: '🌳', departmentId: 'dep-medioambiente', riskFactor: 2 },
-    { id: 'agua', name: 'Red de Agua, Fugas y Fuentes', icon: '🚰', departmentId: 'dep-vias', riskFactor: 4 },
-    { id: 'senalizacion', name: 'Señalización y Espejos de Tráfico', icon: '🛑', departmentId: 'dep-policia', riskFactor: 4 },
-    { id: 'animales', name: 'Fauna, Ganadería y Animales', icon: '🐕', departmentId: 'dep-medioambiente', riskFactor: 2 },
-    { id: 'otros', name: 'Otras Incidencias Generales', icon: '📋', departmentId: 'dep-vias', riskFactor: 1 }
+    { id: 'vias', name: 'Aceras, Empedrado y Asfalto', iconKey: 'road', departmentId: 'dep-vias', riskFactor: 3 },
+    { id: 'alumbrado', name: 'Alumbrado y Farolas', iconKey: 'lamp', departmentId: 'dep-alumbrado', riskFactor: 3 },
+    { id: 'limpieza', name: 'Limpieza Urbana y Plazas', iconKey: 'cleaning', departmentId: 'dep-limpieza', riskFactor: 2 },
+    { id: 'residuos', name: 'Contenedores y Reciclaje', iconKey: 'trash', departmentId: 'dep-limpieza', riskFactor: 2 },
+    { id: 'caminos', name: 'Caminos Rurales y Dehesa (GR-48)', iconKey: 'trail', departmentId: 'dep-medioambiente', riskFactor: 3 },
+    { id: 'patrimonio', name: 'Castillo de Sancho IV y Ermitas', iconKey: 'castle', departmentId: 'dep-patrimonio', riskFactor: 3 },
+    { id: 'parques', name: 'Paseo de Andalucía y Jardines', iconKey: 'tree', departmentId: 'dep-medioambiente', riskFactor: 2 },
+    { id: 'agua', name: 'Red de Agua, Fugas y Fuentes', iconKey: 'water', departmentId: 'dep-vias', riskFactor: 4 },
+    { id: 'senalizacion', name: 'Señalización y Espejos', iconKey: 'sign', departmentId: 'dep-policia', riskFactor: 4 },
+    { id: 'animales', name: 'Ganadería Ibérica y Fauna', iconKey: 'livestock', departmentId: 'dep-medioambiente', riskFactor: 2 },
+    { id: 'otros', name: 'Otras Incidencias Generales', iconKey: 'incidents', departmentId: 'dep-vias', riskFactor: 1 }
   ],
 
   users: [
@@ -52,32 +51,40 @@ export const MockData = {
       name: 'María Carmen Márquez',
       email: 'mamen@ciudadano.es',
       role: 'ROLE_CITIZEN',
+      roleBadge: 'Vecina de Cumbres',
+      roleColor: '#10B981',
       municipalityId: 'mun-cumbresmayores',
       phone: '+34 622 334 455',
       avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80'
     },
     {
       id: 'usr-employee-1',
-      name: 'Manuel Romero (Operario Municipal)',
+      name: 'Manuel Romero (Operario)',
       email: 'operario@cumbresmayores.es',
       role: 'ROLE_EMPLOYEE',
+      roleBadge: 'Operario Municipal',
+      roleColor: '#F59E0B',
       departmentId: 'dep-vias',
       municipalityId: 'mun-cumbresmayores',
       avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80'
     },
     {
       id: 'usr-admin-1',
-      name: 'Equipo de Gobierno (Concejalía de Obras y Servicios)',
+      name: 'Equipo de Gobierno (Concejalía)',
       email: 'ayuntamiento@cumbresmayores.es',
       role: 'ROLE_MUNICIPAL_ADMIN',
+      roleBadge: 'Concejalía / Obras',
+      roleColor: '#FF7A18',
       municipalityId: 'mun-cumbresmayores',
       avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80'
     },
     {
       id: 'usr-superadmin-1',
-      name: 'Administrador de Sistemas Civitas',
+      name: 'Administrador Civitas',
       email: 'admin@cumbresmayores.es',
       role: 'ROLE_SUPERADMIN',
+      roleBadge: 'SuperAdmin',
+      roleColor: '#8B5CF6',
       municipalityId: 'mun-cumbresmayores',
       avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80'
     }

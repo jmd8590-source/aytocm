@@ -1,6 +1,7 @@
 /**
  * CIVITAS / AYUNTAMIENTO DE CUMBRES MAYORES
  * Report Wizard Component (4-Pasos: "Detectar → Ubicar → Informar → Seguir")
+ * Con Iconografía Vectorial de Alta Gama
  */
 
 import { store } from '../state/store.js';
@@ -8,6 +9,7 @@ import { IncidentService } from '../services/incidentService.js';
 import { Security } from '../utils/security.js';
 import { Helpers } from '../utils/helpers.js';
 import { NotificationService } from '../services/notificationService.js';
+import { Icons } from '../utils/icons.js';
 
 export const ReportWizard = {
   currentStep: 1,
@@ -44,7 +46,7 @@ export const ReportWizard = {
     const categories = store.getState().categories;
 
     container.innerHTML = `
-      <div class="card" style="max-width: 780px; margin: 0 auto;">
+      <div class="card" style="max-width: 800px; margin: 0 auto;">
         <!-- Progress Stepper -->
         <div class="wizard-progress">
           <div class="wizard-step-node ${this.currentStep === 1 ? 'active' : (this.currentStep > 1 ? 'completed' : '')}" onclick="CivitasApp.wizard.goToStep(1)">
@@ -67,14 +69,16 @@ export const ReportWizard = {
 
         <!-- Step 1: Detectar (Categoría y Urgencia) -->
         <div class="wizard-step-pane ${this.currentStep === 1 ? 'active' : ''}" id="wizard-step-1">
-          <h3 style="margin-bottom: 0.5rem;">Paso 1: ¿Qué tipo de incidencia has detectado en Cumbres Mayores?</h3>
-          <p style="margin-bottom: 1.25rem; font-size: 0.9rem;">Selecciona la categoría para dirigir el aviso directamente al operario o departamento correspondiente.</p>
+          <h3 style="margin-bottom: 0.5rem; color:#FFFFFF;">Paso 1: ¿Qué tipo de incidencia has detectado en Cumbres Mayores?</h3>
+          <p style="margin-bottom: 1.5rem; font-size: 0.9rem; color:#D4A386;">Selecciona la categoría para dirigir el aviso directamente al operario o departamento correspondiente.</p>
           
-          <div class="category-grid" style="margin-bottom: 1.5rem;">
+          <div class="category-grid" style="margin-bottom: 1.75rem;">
             ${categories.map(cat => `
               <div class="category-card ${this.formData.category === cat.id ? 'selected' : ''}" 
                    onclick="CivitasApp.wizard.selectCategory('${cat.id}')">
-                <span class="category-icon">${cat.icon}</span>
+                <div class="gem-icon-box">
+                  ${Icons.get(cat.iconKey || 'incidents', 22, '#FFAE33')}
+                </div>
                 <span>${cat.name}</span>
               </div>
             `).join('')}
@@ -92,111 +96,99 @@ export const ReportWizard = {
             </div>
           </div>
 
-          <div style="display: flex; justify-content: flex-end; margin-top: 1.5rem;">
-            <button type="button" class="btn btn-primary btn-lg" onclick="CivitasApp.wizard.nextStep()">
-              Siguiente: Ubicar en el Plano &rarr;
+          <div style="display: flex; justify-content: flex-end; margin-top: 2rem;">
+            <button type="button" class="btn btn-sunset" onclick="CivitasApp.wizard.goToStep(2)">
+              Continuar a Ubicación &rarr;
             </button>
           </div>
         </div>
 
-        <!-- Step 2: Ubicar (GPS & Mapa) -->
+        <!-- Step 2: Ubicar (Geolocalización GPS y Mapa) -->
         <div class="wizard-step-pane ${this.currentStep === 2 ? 'active' : ''}" id="wizard-step-2">
-          <h3 style="margin-bottom: 0.5rem;">Paso 2: ¿Dónde se localiza la incidencia?</h3>
-          <p style="margin-bottom: 1rem; font-size: 0.9rem;">Usa tu ubicación actual con un clic o marca el punto en las calles o senderos de Cumbres Mayores.</p>
+          <h3 style="margin-bottom: 0.5rem; color:#FFFFFF;">Paso 2: ¿Dónde se encuentra exactamente?</h3>
+          <p style="margin-bottom: 1.25rem; font-size: 0.9rem; color:#D4A386;">Arrastra el marcador en el mapa o pulsa el botón para usar el GPS del dispositivo.</p>
 
-          <div style="display: flex; gap: 0.75rem; margin-bottom: 1rem;">
-            <button type="button" class="btn btn-secondary" onclick="CivitasApp.wizard.requestGeolocation()">
-              📍 Usar Mi Ubicación GPS Actual
+          <div style="margin-bottom: 1rem; display: flex; gap: 0.75rem; flex-wrap: wrap;">
+            <button type="button" class="btn btn-secondary btn-sm" onclick="CivitasApp.wizard.useCurrentGPS()">
+              ${Icons.get('pin', 16, '#FFAE33')} Usar mi Ubicación GPS
             </button>
-            <input type="text" id="wizard-address-input" class="form-control" placeholder="Ej: Calle La Portá, 12 o Castillo de Sancho IV..." 
-                   value="${this.formData.address}" oninput="CivitasApp.wizard.formData.address = this.value" />
+            <span style="font-size: 0.85rem; color: #D4A386; display: flex; align-items: center;" id="wizard-coords-display">
+              📍 Lat: ${this.formData.lat.toFixed(4)}, Lng: ${this.formData.lng.toFixed(4)}
+            </span>
           </div>
 
-          <div id="wizard-mini-map" style="height: 280px; border-radius: var(--civ-radius-md); border: 1px solid var(--border-subtle); margin-bottom: 1.5rem;"></div>
+          <div class="form-group">
+            <label class="form-label" for="wizard-address">Dirección o Referencia Local <span class="required">*</span></label>
+            <input type="text" id="wizard-address" class="form-control" 
+                   value="${this.formData.address}" 
+                   oninput="CivitasApp.wizard.formData.address = this.value" />
+          </div>
 
-          <div id="wizard-duplicate-alert" style="display: none;"></div>
+          <div style="height: 280px; border-radius: var(--cm-radius-md); overflow: hidden; margin-bottom: 1.5rem; border: 1.5px solid rgba(255, 159, 56, 0.25);" id="wizard-map"></div>
 
           <div style="display: flex; justify-content: space-between; margin-top: 1.5rem;">
-            <button type="button" class="btn btn-secondary" onclick="CivitasApp.wizard.prevStep()">&larr; Volver</button>
-            <button type="button" class="btn btn-primary" onclick="CivitasApp.wizard.checkDuplicatesAndProceed()">
-              Siguiente: Describir y Fotos &rarr;
-            </button>
+            <button type="button" class="btn btn-secondary" onclick="CivitasApp.wizard.goToStep(1)">&larr; Atrás</button>
+            <button type="button" class="btn btn-sunset" onclick="CivitasApp.wizard.goToStep(3)">Continuar a Detalles &rarr;</button>
           </div>
         </div>
 
-        <!-- Step 3: Informar (Detalles, Fotos & Captcha) -->
+        <!-- Step 3: Informar (Detalles, Fotografías y Captcha) -->
         <div class="wizard-step-pane ${this.currentStep === 3 ? 'active' : ''}" id="wizard-step-3">
-          <h3 style="margin-bottom: 0.5rem;">Paso 3: Describe los detalles y adjunta fotografías</h3>
-          <p style="margin-bottom: 1.25rem; font-size: 0.9rem;">Una descripción clara y una fotografía facilitan el desplazamiento inmediato de los servicios municipales.</p>
+          <h3 style="margin-bottom: 0.5rem; color:#FFFFFF;">Paso 3: Describe la incidencia y añade fotos</h3>
+          <p style="margin-bottom: 1.25rem; font-size: 0.9rem; color:#D4A386;">Aporta una descripción clara para que el equipo municipal acuda con el material necesario.</p>
 
           <div class="form-group">
-            <label class="form-label" for="wizard-title">Título breve <span class="required">*</span></label>
-            <input type="text" id="wizard-title" class="form-control" placeholder="Ej: Adoquín suelto en Calle La Portá frente a la farmacia" 
-                   value="${this.formData.title}" oninput="CivitasApp.wizard.formData.title = this.value" required />
+            <label class="form-label" for="wizard-title">Título Resumido <span class="required">*</span></label>
+            <input type="text" id="wizard-title" class="form-control" placeholder="Ej: Fuga de agua en fuente de Plaza de España"
+                   value="${this.formData.title}" oninput="CivitasApp.wizard.formData.title = this.value" maxlength="100" />
           </div>
 
           <div class="form-group">
-            <label class="form-label" for="wizard-desc">Descripción detallada <span class="required">*</span></label>
-            <textarea id="wizard-desc" class="form-control" placeholder="Indica detalles para localizar la avería, posibles riesgos o vehículos afectados..." 
-                      oninput="CivitasApp.wizard.formData.description = this.value" required>${this.formData.description}</textarea>
+            <label class="form-label" for="wizard-desc">Descripción Detallada <span class="required">*</span></label>
+            <textarea id="wizard-desc" class="form-control" placeholder="Explica con detalle el problema, peligrosidad o daños observados..."
+                      oninput="CivitasApp.wizard.formData.description = this.value">${this.formData.description}</textarea>
           </div>
 
-          <!-- Photo Upload Area -->
+          <!-- Photo Uploader -->
           <div class="form-group">
-            <label class="form-label">Fotografías o Evidencias</label>
-            <div class="photo-uploader" onclick="document.getElementById('wizard-photo-input').click()">
-              <div style="font-size: 2rem; margin-bottom: 0.5rem;">📷</div>
-              <p style="font-weight: 600; color: var(--brand-primary); margin-bottom: 0.25rem;">Haz clic para subir fotos o captura desde el móvil</p>
-              <p style="font-size: 0.8rem; color: var(--text-muted);">Formatos admitidos: JPG, PNG, WEBP (hasta 3 fotos)</p>
-              <input type="file" id="wizard-photo-input" accept="image/*" multiple style="display: none;" onchange="CivitasApp.wizard.handlePhotoUpload(event)" />
+            <label class="form-label">Fotografías o Evidencias (Máx. 3 fotos)</label>
+            <div class="photo-uploader" onclick="document.getElementById('wizard-file-input').click()">
+              <div class="gem-icon-box" style="margin: 0 auto 0.75rem;">
+                ${Icons.get('camera', 24, '#FFAE33')}
+              </div>
+              <div style="font-weight: 750; font-size: 0.9rem; color: #FFFFFF;">Haz clic o arrastra fotos aquí</div>
+              <p style="font-size: 0.75rem; color: #A89082; margin-top: 0.25rem;">Formatos JPG, PNG o WebP (Comprimidas automáticamente)</p>
+              <input type="file" id="wizard-file-input" style="display: none;" accept="image/*" multiple onchange="CivitasApp.wizard.handleFileSelect(event)" />
             </div>
 
             <div class="photo-preview-grid" id="wizard-photo-previews">
               ${this.formData.images.map((img, idx) => `
                 <div class="photo-preview-item">
-                  <img src="${img}" alt="Preview ${idx + 1}" />
-                  <button type="button" class="photo-remove-btn" onclick="CivitasApp.wizard.removePhoto(${idx})">&times;</button>
+                  <img src="${img}" alt="Preview" />
+                  <button type="button" class="photo-remove-btn" onclick="CivitasApp.wizard.removeImage(${idx})">&times;</button>
                 </div>
               `).join('')}
             </div>
           </div>
 
-          <!-- Anti-bot Math Captcha & Honeypot -->
-          <div style="background-color: var(--bg-surface-subtle); padding: 1rem; border-radius: var(--civ-radius-md); border: 1px solid var(--border-subtle); margin: 1.5rem 0;">
-            <label class="form-label" for="wizard-captcha">Verificación de Seguridad: ${this.currentCaptcha.question} <span class="required">*</span></label>
-            <input type="number" id="wizard-captcha" class="form-control" style="max-width: 140px;" placeholder="Respuesta" required />
-            <input type="text" id="wizard-honeypot" style="display: none;" tabindex="-1" autocomplete="off" />
+          <!-- Captcha Antispam -->
+          <div class="card" style="background: rgba(18, 10, 6, 0.9); padding: 1rem; margin-bottom: 1.5rem; border: 1px solid rgba(255, 159, 56, 0.2);">
+            <label class="form-label" style="margin-bottom: 0.5rem;">🔒 Verificación Anti-Spam: ¿Cuánto es ${this.currentCaptcha.question}?</label>
+            <input type="number" id="wizard-captcha-input" class="form-control" placeholder="Tu respuesta numérica..." style="max-width: 180px;" />
           </div>
 
           <div style="display: flex; justify-content: space-between; margin-top: 1.5rem;">
-            <button type="button" class="btn btn-secondary" onclick="CivitasApp.wizard.prevStep()">&larr; Volver</button>
-            <button type="button" class="btn btn-emerald btn-lg" onclick="CivitasApp.wizard.submitReport()">
-              🚀 Enviar Incidencia al Ayuntamiento
+            <button type="button" class="btn btn-secondary" onclick="CivitasApp.wizard.goToStep(2)">&larr; Atrás</button>
+            <button type="button" class="btn btn-sunset" onclick="CivitasApp.wizard.submitIncident()">
+              🚀 Enviar Aviso al Ayuntamiento
             </button>
           </div>
         </div>
 
-        <!-- Step 4: Seguir (Éxito & Seguimiento) -->
+        <!-- Step 4: Seguir (Confirmación y Código de Seguimiento) -->
         <div class="wizard-step-pane ${this.currentStep === 4 ? 'active' : ''}" id="wizard-step-4">
-          <div style="text-align: center; padding: 2rem 1rem;">
-            <div style="font-size: 3.5rem; margin-bottom: 1rem;">🏰</div>
-            <h2 style="color: var(--civ-emerald-600); margin-bottom: 0.5rem;">¡Incidencia Registrada en el Ayuntamiento!</h2>
-            <p style="margin-bottom: 1.5rem;">Tu aviso ha sido asignado a los servicios municipales de Cumbres Mayores.</p>
-
-            <div style="background-color: var(--bg-surface-subtle); border: 2px dashed var(--brand-primary); border-radius: var(--civ-radius-lg); padding: 1.5rem; max-width: 420px; margin: 0 auto 2rem;">
-              <span style="font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">Código de Seguimiento Municipal</span>
-              <div style="font-size: 1.8rem; font-weight: 800; color: var(--brand-primary); letter-spacing: 0.05em; margin: 0.5rem 0;" id="wizard-success-code">-</div>
-              <p style="font-size: 0.8rem; color: var(--text-secondary);">Guarda este código para consultar el estado y la resolución por parte de los operarios.</p>
-            </div>
-
-            <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
-              <button type="button" class="btn btn-primary" onclick="CivitasApp.navigateTo('incidents')">
-                📋 Ver Mis Avisos
-              </button>
-              <button type="button" class="btn btn-secondary" onclick="CivitasApp.wizard.init()">
-                ➕ Reportar Otra Incidencia
-              </button>
-            </div>
+          <div id="wizard-confirmation-box" style="text-align: center; padding: 2rem 1rem;">
+            <!-- Rendered after submit -->
           </div>
         </div>
       </div>
@@ -207,8 +199,8 @@ export const ReportWizard = {
     }
   },
 
-  selectCategory(catId) {
-    this.formData.category = catId;
+  selectCategory(categoryId) {
+    this.formData.category = categoryId;
     this.render('report-wizard-container');
   },
 
@@ -218,61 +210,69 @@ export const ReportWizard = {
   },
 
   goToStep(step) {
-    if (step < this.currentStep) {
-      this.currentStep = step;
-      this.render('report-wizard-container');
+    if (step === 2 && !this.formData.category) {
+      NotificationService.showToast('Atención', 'Selecciona una categoría para continuar.', 'warning');
+      return;
     }
-  },
+    if (step === 3 && !this.formData.address) {
+      NotificationService.showToast('Atención', 'Indica la ubicación en Cumbres Mayores.', 'warning');
+      return;
+    }
 
-  nextStep() {
-    this.currentStep++;
-    this.render('report-wizard-container');
-  },
-
-  prevStep() {
-    this.currentStep = Math.max(this.currentStep - 1, 1);
+    this.currentStep = step;
     this.render('report-wizard-container');
   },
 
   initMiniMap() {
-    const mapEl = document.getElementById('wizard-mini-map');
-    if (!mapEl || typeof L === 'undefined') return;
+    const mapEl = document.getElementById('wizard-map');
+    if (!mapEl) return;
 
     if (this.miniMap) {
       this.miniMap.remove();
     }
 
-    this.miniMap = L.map('wizard-mini-map', {
-      zoomControl: true,
-      attributionControl: false
-    }).setView([this.formData.lat, this.formData.lng], 16);
+    this.miniMap = L.map('wizard-map').setView([this.formData.lat, this.formData.lng], 16);
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+      maxZoom: 19,
+      attribution: '&copy; CartoDB &copy; OpenStreetMap'
     }).addTo(this.miniMap);
 
+    const customIcon = L.divIcon({
+      className: 'custom-map-pin',
+      html: `<div style="background: var(--brand-gradient); width: 28px; height: 28px; border-radius: 50%; border: 2.5px solid white; box-shadow: 0 4px 12px rgba(255,122,24,0.6); display: flex; align-items: center; justify-content: center; color: white; font-size: 14px;">📍</div>`,
+      iconSize: [28, 28],
+      iconAnchor: [14, 14]
+    });
+
     this.miniMapMarker = L.marker([this.formData.lat, this.formData.lng], {
-      draggable: true
+      draggable: true,
+      icon: customIcon
     }).addTo(this.miniMap);
 
     this.miniMapMarker.on('dragend', (e) => {
-      const pos = e.target.getLatLng();
-      this.formData.lat = pos.lat;
-      this.formData.lng = pos.lng;
-      this.checkForDuplicates();
+      const position = e.target.getLatLng();
+      this.formData.lat = position.lat;
+      this.formData.lng = position.lng;
+      const coordsEl = document.getElementById('wizard-coords-display');
+      if (coordsEl) {
+        coordsEl.innerText = `📍 Lat: ${position.lat.toFixed(4)}, Lng: ${position.lng.toFixed(4)}`;
+      }
     });
 
     this.miniMap.on('click', (e) => {
       this.formData.lat = e.latlng.lat;
       this.formData.lng = e.latlng.lng;
       this.miniMapMarker.setLatLng(e.latlng);
-      this.checkForDuplicates();
+      const coordsEl = document.getElementById('wizard-coords-display');
+      if (coordsEl) {
+        coordsEl.innerText = `📍 Lat: ${e.latlng.lat.toFixed(4)}, Lng: ${e.latlng.lng.toFixed(4)}`;
+      }
     });
   },
 
-  requestGeolocation() {
+  useCurrentGPS() {
     if ('geolocation' in navigator) {
-      NotificationService.showToast('Localizando...', 'Obteniendo GPS de tu dispositivo en Cumbres Mayores', 'info');
       navigator.geolocation.getCurrentPosition(
         (pos) => {
           this.formData.lat = pos.coords.latitude;
@@ -281,126 +281,106 @@ export const ReportWizard = {
             this.miniMap.setView([this.formData.lat, this.formData.lng], 17);
             this.miniMapMarker.setLatLng([this.formData.lat, this.formData.lng]);
           }
-          this.formData.address = `GPS: ${this.formData.lat.toFixed(5)}, ${this.formData.lng.toFixed(5)}`;
-          const addrInput = document.getElementById('wizard-address-input');
-          if (addrInput) addrInput.value = this.formData.address;
-          NotificationService.showToast('Ubicación Detectada', 'Punto GPS fijado con éxito', 'success');
-          this.checkForDuplicates();
+          const coordsEl = document.getElementById('wizard-coords-display');
+          if (coordsEl) {
+            coordsEl.innerText = `📍 Lat: ${this.formData.lat.toFixed(4)}, Lng: ${this.formData.lng.toFixed(4)}`;
+          }
+          NotificationService.showToast('GPS Fijado', 'Ubicación GPS capturada con precisión.', 'success');
         },
         (err) => {
-          console.warn('Geolocation error', err);
-          NotificationService.showToast('Aviso GPS', 'Puedes marcar el punto en el mapa de Cumbres Mayores manualmente.', 'warning');
-        },
-        { enableHighAccuracy: true, timeout: 6000 }
+          NotificationService.showToast('Aviso GPS', 'No se pudo obtener el GPS; usa el mapa.', 'warning');
+        }
       );
     }
   },
 
-  checkForDuplicates() {
-    const duplicates = IncidentService.findDuplicates(this.formData.lat, this.formData.lng, this.formData.category, 60);
-    const alertBox = document.getElementById('wizard-duplicate-alert');
-    if (!alertBox) return duplicates;
-
-    if (duplicates.length > 0) {
-      const topMatch = duplicates[0].incident;
-      alertBox.style.display = 'block';
-      alertBox.innerHTML = `
-        <div class="duplicate-alert-banner">
-          <div style="font-size: 1.75rem;">⚠️</div>
-          <div style="flex: 1;">
-            <strong style="color: var(--civ-amber-600); font-size: 0.95rem;">Posible incidencia similar ya comunicada</strong>
-            <p style="font-size: 0.85rem; margin: 0.25rem 0;">Ya existe un reporte cercano a ${duplicates[0].distanceMeters}m: <strong>"${topMatch.title}"</strong> (${topMatch.trackingCode}).</p>
-            <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
-              <button type="button" class="btn btn-sm btn-primary" onclick="CivitasApp.wizard.joinExistingIncident('${topMatch.id}')">
-                👍 Sumarme a este aviso ("A mí también me afecta")
-              </button>
-              <button type="button" class="btn btn-sm btn-secondary" onclick="document.getElementById('wizard-duplicate-alert').style.display='none'">
-                Continuar con nuevo reporte
-              </button>
-            </div>
-          </div>
-        </div>
-      `;
-    } else {
-      alertBox.style.display = 'none';
-    }
-
-    return duplicates;
-  },
-
-  joinExistingIncident(incidentId) {
-    IncidentService.addAdherent(incidentId);
-    CivitasApp.navigateTo('incidents');
-  },
-
-  checkDuplicatesAndProceed() {
-    this.checkForDuplicates();
-    this.nextStep();
-  },
-
-  async handlePhotoUpload(event) {
+  handleFileSelect(event) {
     const files = event.target.files;
     if (!files || !files.length) return;
 
-    for (let i = 0; i < Math.min(files.length, 3 - this.formData.images.length); i++) {
-      try {
-        const compressedBase64 = await Helpers.compressImageToBase64(files[i]);
-        this.formData.images.push(compressedBase64);
-      } catch (err) {
-        console.error('Error compressing image', err);
-      }
-    }
-
-    this.render('report-wizard-container');
+    Array.from(files).slice(0, 3 - this.formData.images.length).forEach(file => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        this.formData.images.push(e.target.result);
+        this.render('report-wizard-container');
+      };
+      reader.readAsDataURL(file);
+    });
   },
 
-  removePhoto(index) {
+  removeImage(index) {
     this.formData.images.splice(index, 1);
     this.render('report-wizard-container');
   },
 
-  submitReport() {
-    const title = this.formData.title.trim();
-    const desc = this.formData.description.trim();
-    const captchaInput = document.getElementById('wizard-captcha');
-    const honeypotInput = document.getElementById('wizard-honeypot');
+  submitIncident() {
+    const title = this.formData.title ? this.formData.title.trim() : '';
+    const desc = this.formData.description ? this.formData.description.trim() : '';
+    const captchaInput = document.getElementById('wizard-captcha-input');
+    const userCaptcha = captchaInput ? parseInt(captchaInput.value, 10) : null;
 
-    if (!title) {
-      NotificationService.showToast('Campo Requerido', 'Por favor, introduce un título breve', 'warning');
+    if (!title || !desc) {
+      NotificationService.showToast('Faltan Campos', 'Por favor, introduce un título y descripción.', 'warning');
       return;
     }
 
-    if (!desc) {
-      NotificationService.showToast('Campo Requerido', 'Por favor, describe la incidencia', 'warning');
-      return;
-    }
-
-    if (honeypotInput && !Security.verifyHoneypot(honeypotInput.value)) {
-      console.warn('Bot detected via honeypot');
-      return;
-    }
-
-    if (!captchaInput || parseInt(captchaInput.value, 10) !== this.currentCaptcha.expectedAnswer) {
-      NotificationService.showToast('Verificación Incorrecta', 'Por favor, resuelve la pregunta anti-bot', 'error');
+    if (userCaptcha !== this.currentCaptcha.answer) {
+      NotificationService.showToast('Error Anti-Spam', 'Respuesta incorrecta al cálculo de seguridad.', 'error');
       this.currentCaptcha = Security.generateMathCaptcha();
       this.render('report-wizard-container');
       return;
     }
 
-    const newInc = IncidentService.createIncident({
+    // Default sample image if none provided
+    if (this.formData.images.length === 0) {
+      this.formData.images.push('https://images.unsplash.com/photo-1517646287270-a5a9ca602e5c?w=800&auto=format&fit=crop&q=80');
+    }
+
+    const created = IncidentService.createIncident({
       title: title,
       description: desc,
       category: this.formData.category,
       urgency: this.formData.urgency,
       lat: this.formData.lat,
       lng: this.formData.lng,
-      address: this.formData.address,
+      address: this.formData.address || 'Cumbres Mayores (Huelva)',
       images: this.formData.images
     });
 
     this.currentStep = 4;
     this.render('report-wizard-container');
-    const codeEl = document.getElementById('wizard-success-code');
-    if (codeEl) codeEl.textContent = newInc.trackingCode;
+
+    const confirmationBox = document.getElementById('wizard-confirmation-box');
+    if (confirmationBox) {
+      confirmationBox.innerHTML = `
+        <div class="gem-icon-box gem-lg" style="margin: 0 auto 1.25rem;">
+          ${Icons.get('checkCircle', 32, '#6EE7B7')}
+        </div>
+        <h2 style="margin-bottom: 0.5rem; color:#FFFFFF;">¡Aviso Registrado con Éxito!</h2>
+        <p style="color: #D4A386; max-width: 540px; margin: 0 auto 1.5rem;">
+          Tu comunicación ha sido trasladada al equipo municipal de Cumbres Mayores para su inspección inmediata.
+        </p>
+
+        <div style="background: rgba(18, 10, 6, 0.9); border: 1.5px solid rgba(255, 159, 56, 0.3); border-radius: var(--cm-radius-md); padding: 1.25rem; max-width: 420px; margin: 0 auto 2rem;">
+          <div style="font-size: 0.8rem; color: #A89082; text-transform: uppercase; font-weight: 750;">Código Único de Seguimiento</div>
+          <div style="font-size: 1.85rem; font-weight: 850; font-family: var(--cm-font-mono); color: #FFAE33; margin: 0.35rem 0;">
+            ${created.trackingCode}
+          </div>
+          <div style="font-size: 0.775rem; color: #D4A386;">Guarda este código para consultar el estado en cualquier momento.</div>
+        </div>
+
+        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+          <button type="button" class="btn btn-primary" onclick="CivitasApp.openIncidentDetail('${created.id}')">
+            Ver Detalle del Aviso
+          </button>
+          <button type="button" class="btn btn-secondary" onclick="CivitasApp.navigateTo('map')">
+            Ver en el Plano
+          </button>
+          <button type="button" class="btn btn-secondary" onclick="CivitasApp.navigateTo('home')">
+            Volver al Inicio
+          </button>
+        </div>
+      `;
+    }
   }
 };

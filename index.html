@@ -15,7 +15,7 @@
   <!-- Google Fonts: Plus Jakarta Sans & Outfit -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
 
   <!-- Leaflet CSS & JS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
@@ -30,39 +30,51 @@
   <link rel="stylesheet" href="./css/views.css" />
 </head>
 <body>
+  <!-- Global Vector SVG Gradients Defs -->
+  <div id="svg-defs-container"></div>
+
   <!-- Accessibility Skip Link -->
   <a href="#workspace-content-area" class="skip-link">Saltar al contenido principal</a>
 
-  <!-- Top Persona / Role Switcher Strip -->
-  <aside class="role-bar" style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 1.5rem; background: #0A0503; border-bottom: 1px solid rgba(255, 159, 56, 0.15);">
-    <div class="role-bar-group" style="display: flex; align-items: center; gap: 0.5rem;">
-      <span style="font-size: 0.75rem; color: #A89082;">🎭 <strong>Modo Demo / Rol:</strong></span>
+  <!-- Top Persona / Role Switcher Strip (High-Contrast, Vibrant Glowing Badges) -->
+  <aside class="role-bar" aria-label="Selector de rol de prueba">
+    <div class="role-bar-group">
+      <div class="role-bar-label">
+        <span>🎭</span>
+        <span>MODO DEMO / ROL:</span>
+      </div>
       <button type="button" class="role-pill active" data-role="ROLE_CITIZEN" onclick="CivitasApp.switchRole('ROLE_CITIZEN')">
-        🙋 Vecino/a
+        <span style="font-size:0.95rem;">🙋</span>
+        <span>Vecina de Cumbres</span>
       </button>
       <button type="button" class="role-pill" data-role="ROLE_EMPLOYEE" onclick="CivitasApp.switchRole('ROLE_EMPLOYEE')">
-        🛠️ Operario Municipal
+        <span style="font-size:0.95rem;">🛠️</span>
+        <span>Operario Municipal</span>
       </button>
       <button type="button" class="role-pill" data-role="ROLE_MUNICIPAL_ADMIN" onclick="CivitasApp.switchRole('ROLE_MUNICIPAL_ADMIN')">
-        🏛️ Concejalía / Admin
+        <span style="font-size:0.95rem;">🏛️</span>
+        <span>Concejalía / Obras</span>
       </button>
       <button type="button" class="role-pill" data-role="ROLE_SUPERADMIN" onclick="CivitasApp.switchRole('ROLE_SUPERADMIN')">
-        ⚡ SuperAdmin
+        <span style="font-size:0.95rem;">⚡</span>
+        <span>SuperAdmin</span>
       </button>
     </div>
-    <div style="font-size: 0.75rem; color: var(--vibe-amber-300); font-weight: 600;">
-      📍 Cumbres Mayores (Huelva) — Sierra de Aracena (21380)
+    <div style="font-size: 0.825rem; color: #FFE5C4; font-weight: 750; letter-spacing: 0.02em; text-shadow: 0 1px 2px rgba(0,0,0,0.5);">
+      📍 Cumbres Mayores (Huelva) — Sierra de Aracena
     </div>
   </aside>
 
   <!-- Master Luxury Floating Dashboard Frame (VibeCut Style) -->
   <div class="app-shell">
-    <!-- Left Glass Sidebar -->
+    <!-- Left Glass Sidebar with Bespoke Vector Icons -->
     <aside class="app-sidebar" role="navigation" aria-label="Menú principal">
       <div>
         <!-- Sidebar Brand -->
         <div class="sidebar-brand" onclick="CivitasApp.navigateTo('home')">
-          <div class="brand-icon-flame">🏰</div>
+          <div class="brand-icon-flame" id="brand-logo-container">
+            <!-- Castle SVG injected -->
+          </div>
           <div>
             <div class="sidebar-brand-title">Cumbres Mayores</div>
             <div class="sidebar-brand-sub">Ayuntamiento Oficial</div>
@@ -70,46 +82,46 @@
         </div>
 
         <!-- Sidebar Menu Links -->
-        <ul class="sidebar-menu">
+        <ul class="sidebar-menu" id="sidebar-menu-list">
           <li>
             <button type="button" class="sidebar-link active" data-route="home" onclick="CivitasApp.navigateTo('home')">
-              <span class="sidebar-link-icon">🏠</span>
+              <div class="sidebar-link-icon-box" data-icon="home"></div>
               <span>Inicio</span>
             </button>
           </li>
           <li>
             <button type="button" class="sidebar-link" data-route="report" onclick="CivitasApp.navigateTo('report')">
-              <span class="sidebar-link-icon">📢</span>
+              <div class="sidebar-link-icon-box" data-icon="report"></div>
               <span>Reportar Aviso</span>
             </button>
           </li>
           <li>
             <button type="button" class="sidebar-link" data-route="map" onclick="CivitasApp.navigateTo('map')">
-              <span class="sidebar-link-icon">🗺️</span>
+              <div class="sidebar-link-icon-box" data-icon="map"></div>
               <span>Plano Municipal</span>
             </button>
           </li>
           <li>
             <button type="button" class="sidebar-link" data-route="incidents" onclick="CivitasApp.navigateTo('incidents')">
-              <span class="sidebar-link-icon">📋</span>
+              <div class="sidebar-link-icon-box" data-icon="incidents"></div>
               <span>Incidencias</span>
             </button>
           </li>
           <li>
             <button type="button" class="sidebar-link" data-route="suggestions" onclick="CivitasApp.navigateTo('suggestions')">
-              <span class="sidebar-link-icon">💡</span>
+              <div class="sidebar-link-icon-box" data-icon="bulb"></div>
               <span>Presupuestos</span>
             </button>
           </li>
           <li id="sidebar-admin-item" style="display: none;">
             <button type="button" class="sidebar-link" data-route="admin" onclick="CivitasApp.navigateTo('admin')">
-              <span class="sidebar-link-icon">🏛️</span>
+              <div class="sidebar-link-icon-box" data-icon="shield"></div>
               <span>Gestión Municipal</span>
             </button>
           </li>
           <li>
             <button type="button" class="sidebar-link" data-route="audit" onclick="CivitasApp.navigateTo('audit')">
-              <span class="sidebar-link-icon">🛡️</span>
+              <div class="sidebar-link-icon-box" data-icon="audit"></div>
               <span>Auditoría</span>
             </button>
           </li>
@@ -119,9 +131,9 @@
       <!-- Sidebar Bottom Card / Fast Action -->
       <div>
         <div class="sidebar-cta-card">
-          <div style="font-size: 1.5rem; margin-bottom: 0.25rem;">✨</div>
-          <div style="font-weight: 800; font-size: 0.85rem; color: #FFFFFF; margin-bottom: 0.2rem;">Participación Activa</div>
-          <p style="font-size: 0.725rem; color: var(--text-muted); margin-bottom: 0.75rem;">Tu aviso ayuda a mantener limpio y seguro nuestro pueblo.</p>
+          <div class="gem-icon-box" style="margin: 0 auto 0.5rem; width: 40px; height: 40px;" id="sidebar-cta-icon"></div>
+          <div style="font-weight: 850; font-size: 0.875rem; color: #FFFFFF; margin-bottom: 0.2rem;">Participación Vecinal</div>
+          <p style="font-size: 0.725rem; color: #D4A386; margin-bottom: 0.85rem;">Tu aviso ayuda a mantener en perfecto estado nuestro pueblo.</p>
           <button type="button" class="btn btn-sunset btn-sm" style="width: 100%;" onclick="CivitasApp.navigateTo('report')">
             + Nuevo Aviso
           </button>
@@ -135,7 +147,7 @@
       <header class="workspace-topbar">
         <!-- Search Bar Input (Pill) -->
         <div class="topbar-search">
-          <span class="topbar-search-icon">🔍</span>
+          <span class="topbar-search-icon" id="topbar-search-icon"></span>
           <input type="text" placeholder="Buscar por calle, avería, castillo, farolas o sendero..." 
                  oninput="if(CivitasApp.currentRoute==='incidents'){CivitasApp.applyIncidentFilter('search', this.value)}" />
         </div>
@@ -144,10 +156,10 @@
         <div class="topbar-actions">
           <div class="live-pulse">
             <div class="live-pulse-dot"></div>
-            <span>Servicios Activos</span>
+            <span>Servicios Operativos</span>
           </div>
 
-          <!-- Current User Profile Avatar Pill -->
+          <!-- Current User Profile Avatar Pill (High-Contrast & Large) -->
           <div id="header-user-badge" style="cursor: pointer;" onclick="CivitasApp.switchRole('ROLE_CITIZEN')">
             <!-- Populated dynamically -->
           </div>
@@ -166,31 +178,31 @@
     <ul class="bottom-nav-list">
       <li>
         <button class="bottom-nav-item active" data-route="home" onclick="CivitasApp.navigateTo('home')">
-          <span>🏠</span>
+          <span id="mob-icon-home"></span>
           <span>Inicio</span>
         </button>
       </li>
       <li>
         <button class="bottom-nav-item" data-route="report" onclick="CivitasApp.navigateTo('report')">
-          <span>📢</span>
+          <span id="mob-icon-report"></span>
           <span>Avisar</span>
         </button>
       </li>
       <li>
         <button class="bottom-nav-item" data-route="map" onclick="CivitasApp.navigateTo('map')">
-          <span>🗺️</span>
+          <span id="mob-icon-map"></span>
           <span>Plano</span>
         </button>
       </li>
       <li>
         <button class="bottom-nav-item" data-route="incidents" onclick="CivitasApp.navigateTo('incidents')">
-          <span>📋</span>
+          <span id="mob-icon-incidents"></span>
           <span>Avisos</span>
         </button>
       </li>
       <li>
         <button class="bottom-nav-item" data-route="suggestions" onclick="CivitasApp.navigateTo('suggestions')">
-          <span>💡</span>
+          <span id="mob-icon-bulb"></span>
           <span>Ideas</span>
         </button>
       </li>
@@ -201,7 +213,7 @@
   <div class="modal-backdrop" id="app-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-title">
     <div class="modal-content">
       <div class="modal-header">
-        <h3 id="modal-title" style="font-size: 1.15rem;">Detalle de la Incidencia</h3>
+        <h3 id="modal-title" style="font-size: 1.15rem; color:#FFFFFF;">Detalle de la Incidencia</h3>
         <button type="button" class="btn btn-icon btn-secondary btn-sm" onclick="CivitasApp.closeModal()" aria-label="Cerrar modal">&times;</button>
       </div>
       <div class="modal-body" id="modal-body">
