@@ -22,14 +22,26 @@ export const Security = {
    * Generates a simple, accessible Math Captcha for anti-bot protection
    */
   generateMathCaptcha() {
-    const num1 = Math.floor(Math.random() * 9) + 1;
-    const num2 = Math.floor(Math.random() * 9) + 1;
+    const num1 = Math.floor(Math.random() * 8) + 1;
+    const num2 = Math.floor(Math.random() * 8) + 1;
+    const result = num1 + num2;
     return {
       num1,
       num2,
-      question: `¿Cuánto es ${num1} + ${num2}?`,
-      expectedAnswer: num1 + num2
+      question: `${num1} + ${num2}`,
+      answer: result,
+      expectedAnswer: result
     };
+  },
+
+  /**
+   * Verifies if the user provided answer matches the captcha
+   */
+  verifyMathCaptcha(userInput, captchaObj) {
+    if (!captchaObj) return false;
+    const parsed = parseInt(String(userInput).trim(), 10);
+    const expected = captchaObj.answer !== undefined ? captchaObj.answer : captchaObj.expectedAnswer;
+    return !isNaN(parsed) && parsed === expected;
   },
 
   /**
@@ -62,26 +74,16 @@ export const Security = {
   },
 
   /**
-   * Verifies that the honeypot field is empty (Bot trap)
+   * Anti-tampering signature for incident tracking
    */
-  verifyHoneypot(honeypotValue) {
-    return !honeypotValue || honeypotValue.trim() === '';
-  },
-
-  /**
-   * Simple client-side token mock generator for offline/demo mode
-   */
-  createDemoToken(user) {
-    const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
-    const payload = btoa(JSON.stringify({
-      sub: user.id,
-      email: user.email,
-      name: user.name,
-      role: user.role,
-      municipalityId: user.municipalityId,
-      exp: Math.floor(Date.now() / 1000) + (24 * 60 * 60)
-    }));
-    const signature = btoa('civitas_secure_signature_mock');
-    return `${header}.${payload}.${signature}`;
+  generateIntegrityHash(payload) {
+    const serialized = JSON.stringify(payload);
+    let hash = 0;
+    for (let i = 0; i < serialized.length; i++) {
+      const char = serialized.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash |= 0;
+    }
+    return 'SIG-' + Math.abs(hash).toString(16).toUpperCase();
   }
 };
