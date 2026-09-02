@@ -176,17 +176,21 @@ class CivitasAppController {
       `;
     }
 
-    // Mobile Navigation Icons
+    // Mobile Brand Logo
+    const mobLogo = document.getElementById('topbar-mobile-logo');
+    if (mobLogo) mobLogo.innerHTML = Icons.get('castle', 20, '#FFFFFF');
+
+    // Mobile Navigation Icons (sized to 22px/24px for sharp, generous mobile touch targets)
     const mobHome = document.getElementById('mob-icon-home');
-    if (mobHome) mobHome.innerHTML = Icons.get('home', 20, 'currentColor');
+    if (mobHome) mobHome.innerHTML = Icons.get('home', 22, 'currentColor');
     const mobReport = document.getElementById('mob-icon-report');
-    if (mobReport) mobReport.innerHTML = Icons.get('report', 20, 'currentColor');
+    if (mobReport) mobReport.innerHTML = Icons.get('report', 24, 'currentColor');
     const mobMap = document.getElementById('mob-icon-map');
-    if (mobMap) mobMap.innerHTML = Icons.get('map', 20, 'currentColor');
+    if (mobMap) mobMap.innerHTML = Icons.get('map', 22, 'currentColor');
     const mobInc = document.getElementById('mob-icon-incidents');
-    if (mobInc) mobInc.innerHTML = Icons.get('incidents', 20, 'currentColor');
+    if (mobInc) mobInc.innerHTML = Icons.get('incidents', 22, 'currentColor');
     const mobBulb = document.getElementById('mob-icon-bulb');
-    if (mobBulb) mobBulb.innerHTML = Icons.get('bulb', 20, 'currentColor');
+    if (mobBulb) mobBulb.innerHTML = Icons.get('bulb', 22, 'currentColor');
   }
 
   // --- Language Switcher ---
@@ -219,15 +223,15 @@ class CivitasAppController {
     const locale = I18n.currentLocale;
     const roleLabel = locale === 'en' ? cfg.labelEn : cfg.label;
 
-    // Current User Avatar Badge in Topbar
+    // Current User Avatar Badge in Topbar (with responsive CSS classes)
     const userBadge = document.getElementById('header-user-badge');
     if (userBadge) {
       userBadge.innerHTML = `
-        <div style="display: flex; align-items: center; gap: 0.75rem; background: rgba(30, 18, 11, 0.95); padding: 0.35rem 0.95rem 0.35rem 0.45rem; border-radius: var(--cm-radius-full); border: 1.5px solid ${cfg.border}; box-shadow: 0 4px 16px rgba(0,0,0,0.5), 0 0 12px ${cfg.color}40;">
-          <img src="${currentUser.avatar}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 2px solid ${cfg.color};" alt="Avatar" />
-          <div style="text-align: left; line-height: 1.2;">
-            <div style="font-size: 0.85rem; font-weight: 850; color: #FFFFFF; letter-spacing: -0.01em;">${currentUser.name}</div>
-            <div style="font-size: 0.7rem; color: ${cfg.color}; font-weight: 800; text-transform: uppercase;">${roleLabel}</div>
+        <div class="user-badge-pill" style="border-color: ${cfg.border}; box-shadow: 0 4px 14px rgba(0,0,0,0.4), 0 0 10px ${cfg.color}33;" title="${currentUser.name} — ${roleLabel}">
+          <img src="${currentUser.avatar}" class="user-badge-avatar" style="border-color: ${cfg.color};" alt="${currentUser.name}" />
+          <div class="user-badge-info">
+            <div class="user-badge-name">${currentUser.name}</div>
+            <div class="user-badge-role" style="color: ${cfg.color};">${roleLabel}</div>
           </div>
         </div>
       `;

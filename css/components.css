@@ -967,6 +967,56 @@ textarea.form-control {
 .btn-auth-submit:active { transform: translateY(0) scale(0.99); }
 
 /* ==========================================================================
+   USER BADGE PILL (Topbar)
+   ========================================================================== */
+
+.user-badge-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  background: rgba(30, 18, 11, 0.95);
+  padding: 0.3rem 0.85rem 0.3rem 0.35rem;
+  border-radius: var(--cm-radius-full);
+  border: 1.5px solid rgba(255, 159, 56, 0.3);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+}
+
+.user-badge-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #FFAE33;
+  flex-shrink: 0;
+}
+
+.user-badge-info {
+  text-align: left;
+  line-height: 1.15;
+  min-width: 0;
+}
+
+.user-badge-name {
+  font-size: 0.825rem;
+  font-weight: 850;
+  color: #FFFFFF;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 140px;
+}
+
+.user-badge-role {
+  font-size: 0.675rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+/* ==========================================================================
    LOGOUT BUTTON — Esquina superior derecha del topbar
    ========================================================================== */
 
@@ -974,7 +1024,7 @@ textarea.form-control {
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
-  padding: 0.45rem 0.95rem;
+  padding: 0.42rem 0.85rem;
   background: rgba(251,113,133,0.1);
   border: 1.5px solid rgba(251,113,133,0.25);
   border-radius: var(--cm-radius-full);
@@ -1036,7 +1086,68 @@ textarea.form-control {
 .topbar-lang-switcher {
   display: flex;
   align-items: center;
-  gap: 0.35rem;
+  gap: 0.3rem;
+}
+
+/* Responsive Topbar Actions (Mobile Vertical & Horizontal) */
+@media (max-width: 768px) {
+  .user-badge-pill {
+    padding: 0.25rem 0.55rem 0.25rem 0.25rem;
+    gap: 0.4rem;
+  }
+  .user-badge-name {
+    max-width: 95px;
+    font-size: 0.775rem;
+  }
+  .user-badge-role {
+    display: none; /* Hide role on mobile to prevent crowding */
+  }
+
+  .live-pulse {
+    padding: 0.3rem 0.45rem;
+    gap: 0;
+  }
+  .live-pulse span {
+    display: none; /* Hide "Servicios Operativos" text in small screens */
+  }
+
+  .btn-logout {
+    padding: 0.4rem;
+    width: 34px;
+    height: 34px;
+    justify-content: center;
+    border-radius: 50%;
+  }
+  .btn-logout span {
+    display: none; /* Icon-only logout on mobile */
+  }
+  .btn-logout svg {
+    width: 17px;
+    height: 17px;
+  }
+
+  .lang-btn {
+    padding: 0.25rem 0.45rem;
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .user-badge-pill {
+    padding: 0.15rem;
+    border-radius: 50%;
+    background: transparent;
+    border: none;
+    box-shadow: none !important;
+  }
+  .user-badge-info {
+    display: none; /* Icon-only avatar pill on very narrow phones */
+  }
+  .user-badge-avatar {
+    width: 32px;
+    height: 32px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  }
 }
 
 /* ==========================================================================

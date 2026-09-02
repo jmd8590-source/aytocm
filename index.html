@@ -126,6 +126,15 @@
     <div class="app-workspace">
       <!-- Top Navigation & Search Bar -->
       <header class="workspace-topbar">
+        <!-- Mobile Brand (Visible only on mobile/tablet screens <= 992px) -->
+        <div class="topbar-mobile-brand" onclick="CivitasApp.navigateTo('home')" title="Cumbres Mayores — Inicio">
+          <div class="topbar-mobile-logo" id="topbar-mobile-logo"></div>
+          <div class="topbar-mobile-text">
+            <span class="topbar-mobile-title" data-i18n="sidebar_brand_title">Cumbres Mayores</span>
+            <span class="topbar-mobile-sub" data-i18n="sidebar_brand_sub">Ayto. Oficial</span>
+          </div>
+        </div>
+
         <!-- Search Bar Input (Pill) -->
         <div class="topbar-search">
           <span class="topbar-search-icon" id="topbar-search-icon"></span>
@@ -137,7 +146,7 @@
         <!-- Topbar Actions: Live pulse + Lang Switcher + User Badge + Logout -->
         <div class="topbar-actions">
           <!-- Live Status -->
-          <div class="live-pulse">
+          <div class="live-pulse" title="Servicios Municipales Operativos">
             <div class="live-pulse-dot"></div>
             <span data-i18n="topbar_services">Servicios Operativos</span>
           </div>
@@ -175,32 +184,32 @@
   <nav class="bottom-nav" aria-label="Navegación móvil" style="display:none;">
     <ul class="bottom-nav-list">
       <li>
-        <button class="bottom-nav-item active" data-route="home" onclick="CivitasApp.navigateTo('home')">
-          <span id="mob-icon-home"></span>
+        <button class="bottom-nav-item active" data-route="home" onclick="CivitasApp.navigateTo('home')" aria-label="Inicio">
+          <span class="bottom-nav-icon-wrap" id="mob-icon-home"></span>
           <span data-i18n="nav_mob_home">Inicio</span>
         </button>
       </li>
       <li>
-        <button class="bottom-nav-item" data-route="report" onclick="CivitasApp.navigateTo('report')">
-          <span id="mob-icon-report"></span>
+        <button class="bottom-nav-item" data-route="report" onclick="CivitasApp.navigateTo('report')" aria-label="Avisar incidencia">
+          <span class="bottom-nav-icon-wrap" id="mob-icon-report"></span>
           <span data-i18n="nav_mob_report">Avisar</span>
         </button>
       </li>
       <li>
-        <button class="bottom-nav-item" data-route="map" onclick="CivitasApp.navigateTo('map')">
-          <span id="mob-icon-map"></span>
+        <button class="bottom-nav-item" data-route="map" onclick="CivitasApp.navigateTo('map')" aria-label="Plano Municipal">
+          <span class="bottom-nav-icon-wrap" id="mob-icon-map"></span>
           <span data-i18n="nav_mob_map">Plano</span>
         </button>
       </li>
       <li>
-        <button class="bottom-nav-item" data-route="incidents" onclick="CivitasApp.navigateTo('incidents')">
-          <span id="mob-icon-incidents"></span>
+        <button class="bottom-nav-item" data-route="incidents" onclick="CivitasApp.navigateTo('incidents')" aria-label="Avisos e Incidencias">
+          <span class="bottom-nav-icon-wrap" id="mob-icon-incidents"></span>
           <span data-i18n="nav_mob_incidents">Avisos</span>
         </button>
       </li>
       <li>
-        <button class="bottom-nav-item" data-route="suggestions" onclick="CivitasApp.navigateTo('suggestions')">
-          <span id="mob-icon-bulb"></span>
+        <button class="bottom-nav-item" data-route="suggestions" onclick="CivitasApp.navigateTo('suggestions')" aria-label="Presupuestos e Ideas">
+          <span class="bottom-nav-icon-wrap" id="mob-icon-bulb"></span>
           <span data-i18n="nav_mob_suggestions">Ideas</span>
         </button>
       </li>
