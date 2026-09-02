@@ -5,6 +5,7 @@
 import { store } from '../state/store.js';
 import { AuditService } from '../services/auditService.js';
 import { Helpers } from '../utils/helpers.js';
+import { I18n } from '../utils/i18n.js';
 
 export const AuditViewer = {
   init(containerId = 'audit-container') {
@@ -16,15 +17,17 @@ export const AuditViewer = {
     if (!container) return;
 
     const logs = AuditService.getLogs(filter);
+    const t = (k) => I18n.t(k);
 
     container.innerHTML = `
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
         <div>
-          <h2>Trazabilidad y Auditoría del Sistema</h2>
-          <p style="font-size: 0.9rem;">Registro inmutable de actuaciones administrativas, cambios de estado y resoluciones (Conforme a RGPD y ENS).</p>
+          <h2 data-i18n="audit_title">${t('audit_title')}</h2>
+          <p style="font-size: 0.9rem; color:#D4A386;" data-i18n="audit_subtitle">${t('audit_subtitle')}</p>
         </div>
         <div style="display: flex; gap: 0.5rem;">
-          <input type="text" id="audit-filter-input" class="form-control" style="width: 240px;" placeholder="Filtrar por acción..." 
+          <input type="text" id="audit-filter-input" class="form-control" style="width: 240px;" 
+                 placeholder="${I18n.currentLocale === 'en' ? 'Filter by action...' : 'Filtrar por acción...'}" 
                  value="${filter}" oninput="CivitasApp.audit.filterLogs(this.value)" />
         </div>
       </div>
@@ -33,17 +36,17 @@ export const AuditViewer = {
         <table class="audit-table">
           <thead>
             <tr>
-              <th>Fecha y Hora</th>
-              <th>Acción Registrada</th>
-              <th>Detalles del Evento</th>
-              <th>Usuario Responsable</th>
-              <th>IP Origen</th>
+              <th>${I18n.currentLocale === 'en' ? 'Date & Time' : 'Fecha y Hora'}</th>
+              <th>${I18n.currentLocale === 'en' ? 'Action' : 'Acción Registrada'}</th>
+              <th>${I18n.currentLocale === 'en' ? 'Event Details' : 'Detalles del Evento'}</th>
+              <th>${I18n.currentLocale === 'en' ? 'Responsible User' : 'Usuario Responsable'}</th>
+              <th>${I18n.currentLocale === 'en' ? 'IP Address' : 'IP Origen'}</th>
             </tr>
           </thead>
           <tbody>
             ${logs.length === 0 ? `
               <tr>
-                <td colspan="5" style="text-align: center; padding: 2rem; color: var(--text-muted);">No se encontraron registros de auditoría</td>
+                <td colspan="5" style="text-align: center; padding: 2rem; color: #A89082;">${I18n.currentLocale === 'en' ? 'No audit records found' : 'No se encontraron registros de auditoría'}</td>
               </tr>
             ` : logs.map(log => `
               <tr>

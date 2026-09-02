@@ -10,6 +10,7 @@ import { Security } from '../utils/security.js';
 import { Helpers } from '../utils/helpers.js';
 import { NotificationService } from '../services/notificationService.js';
 import { Icons } from '../utils/icons.js';
+import { I18n } from '../utils/i18n.js';
 
 export const CumbresMayoresStreets = [
   { name: 'Calle La Portá', lat: 38.0628, lng: -6.6459 },
@@ -72,6 +73,7 @@ export const ReportWizard = {
     if (!container) return;
 
     const categories = store.getState().categories;
+    const t = (k) => I18n.t(k);
 
     container.innerHTML = `
       <div class="card" style="max-width: 820px; margin: 0 auto;">
@@ -79,26 +81,26 @@ export const ReportWizard = {
         <div class="wizard-progress">
           <div class="wizard-step-node ${this.currentStep === 1 ? 'active' : (this.currentStep > 1 ? 'completed' : '')}" onclick="CivitasApp.wizard.goToStep(1)">
             <div class="wizard-node-circle">1</div>
-            <span class="wizard-node-label">Detectar</span>
+            <span class="wizard-node-label" data-i18n="wiz_step_1">${t('wiz_step_1')}</span>
           </div>
           <div class="wizard-step-node ${this.currentStep === 2 ? 'active' : (this.currentStep > 2 ? 'completed' : '')}" onclick="CivitasApp.wizard.goToStep(2)">
             <div class="wizard-node-circle">2</div>
-            <span class="wizard-node-label">Ubicar</span>
+            <span class="wizard-node-label" data-i18n="wiz_step_2">${t('wiz_step_2')}</span>
           </div>
           <div class="wizard-step-node ${this.currentStep === 3 ? 'active' : (this.currentStep > 3 ? 'completed' : '')}" onclick="CivitasApp.wizard.goToStep(3)">
             <div class="wizard-node-circle">3</div>
-            <span class="wizard-node-label">Informar</span>
+            <span class="wizard-node-label" data-i18n="wiz_step_3">${t('wiz_step_3')}</span>
           </div>
           <div class="wizard-step-node ${this.currentStep === 4 ? 'active' : ''}">
             <div class="wizard-node-circle">4</div>
-            <span class="wizard-node-label">Seguir</span>
+            <span class="wizard-node-label" data-i18n="wiz_step_4">${t('wiz_step_4')}</span>
           </div>
         </div>
 
         <!-- Step 1: Detectar (Categoría y Urgencia) -->
         <div class="wizard-step-pane ${this.currentStep === 1 ? 'active' : ''}" id="wizard-step-1">
-          <h3 style="margin-bottom: 0.5rem; color:#FFFFFF;">Paso 1: ¿Qué tipo de incidencia has detectado en Cumbres Mayores?</h3>
-          <p style="margin-bottom: 1.5rem; font-size: 0.9rem; color:#D4A386;">Selecciona la categoría para dirigir el aviso directamente al operario o departamento correspondiente.</p>
+          <h3 style="margin-bottom: 0.5rem; color:#FFFFFF;" data-i18n="wiz_step1_title">${t('wiz_step1_title')}</h3>
+          <p style="margin-bottom: 1.5rem; font-size: 0.9rem; color:#D4A386;" data-i18n="wiz_step1_sub">${t('wiz_step1_sub')}</p>
           
           <div class="category-grid" style="margin-bottom: 1.75rem;">
             ${categories.map(cat => `
@@ -107,40 +109,40 @@ export const ReportWizard = {
                 <div class="gem-icon-box">
                   ${Icons.get(cat.iconKey || 'incidents', 22, '#FFAE33')}
                 </div>
-                <span>${cat.name}</span>
+                <span>${I18n.t('cat_' + cat.id) || cat.name}</span>
               </div>
             `).join('')}
           </div>
 
           <div class="form-group">
-            <label class="form-label">Nivel de Urgencia Estimado</label>
+            <label class="form-label" data-i18n="wiz_urgency_title">${t('wiz_urgency_title')}</label>
             <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
               ${['baja', 'media', 'alta', 'urgente'].map(u => `
                 <button type="button" class="btn btn-sm ${this.formData.urgency === u ? 'btn-primary' : 'btn-secondary'}"
                         onclick="CivitasApp.wizard.selectUrgency('${u}')" style="text-transform: capitalize;">
-                  ${u}
+                  ${t('priority_' + u) || u}
                 </button>
               `).join('')}
             </div>
           </div>
 
           <div style="display: flex; justify-content: flex-end; margin-top: 2rem;">
-            <button type="button" class="btn btn-sunset" onclick="CivitasApp.wizard.goToStep(2)">
-              Continuar a Ubicación &rarr;
+            <button type="button" class="btn btn-sunset" onclick="CivitasApp.wizard.goToStep(2)" data-i18n="wiz_btn_continue">
+              ${t('wiz_btn_continue')}
             </button>
           </div>
         </div>
 
         <!-- Step 2: Ubicar (Calle, Número Aproximado y Mapa de Apoyo) -->
         <div class="wizard-step-pane ${this.currentStep === 2 ? 'active' : ''}" id="wizard-step-2">
-          <h3 style="margin-bottom: 0.5rem; color:#FFFFFF;">Paso 2: ¿Dónde se encuentra la avería o incidencia?</h3>
-          <p style="margin-bottom: 1.5rem; font-size: 0.9rem; color:#D4A386;">Indica la calle y el número o referencia más aproximada para que los operarios la localicen rápidamente.</p>
+          <h3 style="margin-bottom: 0.5rem; color:#FFFFFF;" data-i18n="wiz_step2_title">${t('wiz_step2_title')}</h3>
+          <p style="margin-bottom: 1.5rem; font-size: 0.9rem; color:#D4A386;" data-i18n="wiz_step2_sub">${t('wiz_step2_sub')}</p>
 
           <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 1rem; margin-bottom: 1rem;">
             <!-- Calle Selector -->
             <div class="form-group" style="margin-bottom: 0;">
               <label class="form-label" for="wizard-street-select">
-                <span>📍 Calle o Lugar Principal <span class="required">*</span></span>
+                <span>📍 <span data-i18n="wiz_street_label">${t('wiz_street_label')}</span> <span class="required">*</span></span>
               </label>
               <select id="wizard-street-select" class="form-control" onchange="CivitasApp.wizard.handleStreetChange(this.value)">
                 ${CumbresMayoresStreets.map(s => `
@@ -154,7 +156,7 @@ export const ReportWizard = {
             <!-- Número Aproximado -->
             <div class="form-group" style="margin-bottom: 0;">
               <label class="form-label" for="wizard-street-number">
-                <span>🔢 Número aproximado / Altura</span>
+                <span>🔢 <span data-i18n="wiz_number_label">${t('wiz_number_label')}</span></span>
               </label>
               <input type="text" id="wizard-street-number" class="form-control" 
                      placeholder="Ej: Nº 14, Frente al 8, S/N..." 
@@ -174,9 +176,9 @@ export const ReportWizard = {
 
           <!-- Punto de Referencia Adicional -->
           <div class="form-group">
-            <label class="form-label" for="wizard-ref-point">Punto de referencia o detalle adicional (Opcional)</label>
+            <label class="form-label" for="wizard-ref-point" data-i18n="wiz_ref_label">${t('wiz_ref_label')}</label>
             <input type="text" id="wizard-ref-point" class="form-control" 
-                   placeholder="Ej: Junto a la fuente de piedra, frente a la farmacia, acera izquierda..." 
+                   placeholder="${t('wiz_ref_ph')}" 
                    value="${this.formData.referencePoint}" 
                    oninput="CivitasApp.wizard.handleRefChange(this.value)" />
           </div>
@@ -184,96 +186,96 @@ export const ReportWizard = {
           <!-- Dirección Generada en Tiempo Real -->
           <div style="background: rgba(30, 18, 11, 0.9); border: 1.5px solid rgba(255, 159, 56, 0.35); border-radius: var(--cm-radius-md); padding: 0.85rem 1.15rem; margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;">
             <div>
-              <div style="font-size: 0.75rem; color: #A89082; text-transform: uppercase; font-weight: 750;">Dirección Completa Registrada:</div>
+              <div style="font-size: 0.75rem; color: #A89082; text-transform: uppercase; font-weight: 750;">Dirección Completa:</div>
               <strong style="color: #FFBE6B; font-size: 0.95rem;" id="wizard-full-address-text">${this.composeFullAddress()}</strong>
             </div>
-            <button type="button" class="btn btn-secondary btn-sm" onclick="CivitasApp.wizard.useCurrentGPS()">
-              ${Icons.get('pin', 16, '#FFAE33')} Fijar con mi GPS
+            <button type="button" class="btn btn-secondary btn-sm" onclick="CivitasApp.wizard.useCurrentGPS()" data-i18n="wiz_gps_detect">
+              ${Icons.get('pin', 16, '#FFAE33')} ${t('wiz_gps_detect')}
             </button>
           </div>
 
           <!-- Mapa de Apoyo Visual -->
           <div style="margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
             <label class="form-label" style="margin-bottom: 0;">🗺️ Plano de Apoyo Visual (Cumbres Mayores)</label>
-            <span style="font-size: 0.75rem; color: #A89082;">Puedes ajustar el pin si lo deseas</span>
+            <span style="font-size: 0.75rem; color: #A89082;">GPS Sync</span>
           </div>
           <div style="height: 240px; border-radius: var(--cm-radius-md); overflow: hidden; margin-bottom: 1.5rem; border: 1.5px solid rgba(255, 159, 56, 0.25);" id="wizard-map"></div>
 
           <div style="display: flex; justify-content: space-between; margin-top: 1.5rem;">
-            <button type="button" class="btn btn-secondary" onclick="CivitasApp.wizard.goToStep(1)">&larr; Atrás</button>
-            <button type="button" class="btn btn-sunset" onclick="CivitasApp.wizard.goToStep(3)">Continuar a Descripción y Fotos &rarr;</button>
+            <button type="button" class="btn btn-secondary" onclick="CivitasApp.wizard.goToStep(1)">&larr; ${t('btn_cancel')}</button>
+            <button type="button" class="btn btn-sunset" onclick="CivitasApp.wizard.goToStep(3)">${t('wiz_btn_continue')}</button>
           </div>
         </div>
 
-        <!-- Step 3: Informar (Detalles, Fotografías y Verificación Anti-Spam Fiable) -->
+        <!-- Step 3: Informar (Detalles, Fotografías y Verificación Anti-Spam) -->
         <div class="wizard-step-pane ${this.currentStep === 3 ? 'active' : ''}" id="wizard-step-3">
-          <h3 style="margin-bottom: 0.5rem; color:#FFFFFF;">Paso 3: Describe la incidencia y añade fotos</h3>
-          <p style="margin-bottom: 1.25rem; font-size: 0.9rem; color:#D4A386;">Aporta una descripción clara para que el equipo municipal acuda con el material necesario.</p>
+          <h3 style="margin-bottom: 0.5rem; color:#FFFFFF;" data-i18n="wiz_step3_title">${t('wiz_step3_title')}</h3>
+          <p style="margin-bottom: 1.25rem; font-size: 0.9rem; color:#D4A386;" data-i18n="wiz_step3_sub">${t('wiz_step3_sub')}</p>
 
           <div class="form-group">
-            <label class="form-label" for="wizard-title">Título Resumido del Aviso <span class="required">*</span></label>
-            <input type="text" id="wizard-title" class="form-control" placeholder="Ej: Adoquines levantados o farola fundida"
+            <label class="form-label" for="wizard-title"><span data-i18n="wiz_title_label">${t('wiz_title_label')}</span> <span class="required">*</span></label>
+            <input type="text" id="wizard-title" class="form-control" placeholder="${t('wiz_title_ph')}"
                    value="${this.formData.title}" oninput="CivitasApp.wizard.formData.title = this.value" maxlength="100" />
           </div>
 
           <div class="form-group">
-            <label class="form-label" for="wizard-desc">Descripción Detallada <span class="required">*</span></label>
-            <textarea id="wizard-desc" class="form-control" placeholder="Explica con detalle el problema, peligrosidad o desperfectos observados..."
+            <label class="form-label" for="wizard-desc"><span data-i18n="wiz_desc_label">${t('wiz_desc_label')}</span> <span class="required">*</span></label>
+            <textarea id="wizard-desc" class="form-control" placeholder="${t('wiz_desc_ph')}"
                       oninput="CivitasApp.wizard.formData.description = this.value">${this.formData.description}</textarea>
           </div>
 
           <!-- Photo Uploader -->
           <div class="form-group">
-            <label class="form-label">Fotografías o Evidencias (Máx. 3 fotos)</label>
+            <label class="form-label" data-i18n="wiz_photo_label">${t('wiz_photo_label')}</label>
             <div class="photo-uploader" onclick="document.getElementById('wizard-file-input').click()">
               <div class="gem-icon-box" style="margin: 0 auto 0.75rem;">
                 ${Icons.get('camera', 24, '#FFAE33')}
               </div>
-              <div style="font-weight: 750; font-size: 0.9rem; color: #FFFFFF;">Haz clic o arrastra fotos aquí</div>
-              <p style="font-size: 0.75rem; color: #A89082; margin-top: 0.25rem;">Formatos JPG, PNG o WebP</p>
+              <div style="font-weight: 750; font-size: 0.9rem; color: #FFFFFF;" data-i18n="wiz_photo_btn">${t('wiz_photo_btn')}</div>
+              <p style="font-size: 0.75rem; color: #A89082; margin-top: 0.25rem;">JPG, PNG, WebP (Max. 3)</p>
               <input type="file" id="wizard-file-input" style="display: none;" accept="image/*" multiple onchange="CivitasApp.wizard.handleFileSelect(event)" />
             </div>
 
             <div class="photo-preview-grid" id="wizard-photo-previews">
               ${this.formData.images.map((img, idx) => `
                 <div class="photo-preview-item">
-                  <img src="${img}" alt="Preview" />
+                  <img src="${img}" alt="Preview" onerror="this.onerror=null; this.src='./img/adoquinado_calle_porta.jpg';" />
                   <button type="button" class="photo-remove-btn" onclick="CivitasApp.wizard.removeImage(${idx})">&times;</button>
                 </div>
               `).join('')}
             </div>
           </div>
 
-          <!-- Verificación Anti-Spam 100% Fiable y Accesible -->
+          <!-- Verificación Anti-Spam -->
           <div class="card" style="background: rgba(30, 18, 11, 0.95); padding: 1.25rem; margin-bottom: 1.75rem; border: 1.5px solid rgba(255, 159, 56, 0.35);">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
               <label class="form-label" style="margin-bottom: 0; font-size: 0.925rem;">
-                <span>🔒 Verificación de Seguridad Vecinal</span>
+                <span>🔒 <span data-i18n="wiz_security_label">${t('wiz_security_label')}</span></span>
               </label>
-              <button type="button" class="btn btn-secondary btn-sm" onclick="CivitasApp.wizard.refreshCaptcha()" title="Generar otra suma">
-                🔄 Cambiar pregunta
+              <button type="button" class="btn btn-secondary btn-sm" onclick="CivitasApp.wizard.refreshCaptcha()" title="Refresh">
+                🔄
               </button>
             </div>
             
             <p style="font-size: 0.825rem; color: #D4A386; margin-bottom: 0.85rem;">
-              Por favor, resuelve esta sencilla suma para validar el envío al Ayuntamiento:
+              Anti-spam check: ${this.currentCaptcha.num1} + ${this.currentCaptcha.num2} = ?
             </p>
 
             <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
-              <div style="background: rgba(18, 10, 6, 0.95); border: 2px solid #FF7A18; border-radius: var(--cm-radius-md); padding: 0.65rem 1.25rem; font-size: 1.35rem; font-weight: 850; font-family: var(--cm-font-mono); color: #FFAE33; letter-spacing: 0.05em; box-shadow: 0 4px 12px rgba(255,122,24,0.3);">
+              <div style="background: rgba(18, 10, 6, 0.95); border: 2px solid #FF7A18; border-radius: var(--cm-radius-md); padding: 0.65rem 1.25rem; font-size: 1.35rem; font-weight: 850; font-family: var(--cm-font-mono); color: #FFAE33; letter-spacing: 0.05em;">
                 ${this.currentCaptcha.num1} + ${this.currentCaptcha.num2} = ?
               </div>
               <input type="number" id="wizard-captcha-input" class="form-control" 
-                     placeholder="Tu resultado..." 
-                     style="max-width: 170px; font-size: 1.15rem; font-weight: 750; text-align: center;" 
+                     placeholder="..." 
+                     style="max-width: 140px; font-size: 1.15rem; font-weight: 750; text-align: center;" 
                      autocomplete="off" />
             </div>
           </div>
 
           <div style="display: flex; justify-content: space-between; margin-top: 1.5rem;">
-            <button type="button" class="btn btn-secondary" onclick="CivitasApp.wizard.goToStep(2)">&larr; Atrás</button>
-            <button type="button" class="btn btn-sunset btn-lg" onclick="CivitasApp.wizard.submitIncident()">
-              🚀 Enviar Aviso al Ayuntamiento
+            <button type="button" class="btn btn-secondary" onclick="CivitasApp.wizard.goToStep(2)">&larr; ${t('btn_cancel')}</button>
+            <button type="button" class="btn btn-sunset btn-lg" onclick="CivitasApp.wizard.submitIncident()" data-i18n="wiz_btn_submit">
+              ${t('wiz_btn_submit')}
             </button>
           </div>
         </div>
@@ -503,18 +505,19 @@ export const ReportWizard = {
     this.render('report-wizard-container');
 
     const confirmationBox = document.getElementById('wizard-confirmation-box');
+    const t = (k) => I18n.t(k);
     if (confirmationBox) {
       confirmationBox.innerHTML = `
         <div class="gem-icon-box gem-lg" style="margin: 0 auto 1.25rem;">
           ${Icons.get('checkCircle', 32, '#6EE7B7')}
         </div>
-        <h2 style="margin-bottom: 0.5rem; color:#FFFFFF;">¡Aviso Registrado con Éxito!</h2>
-        <p style="color: #D4A386; max-width: 540px; margin: 0 auto 1.5rem;">
-          Tu comunicación ha sido trasladada al equipo municipal de Cumbres Mayores para su inspección inmediata.
+        <h2 style="margin-bottom: 0.5rem; color:#FFFFFF;" data-i18n="wiz_success_title">${t('wiz_success_title')}</h2>
+        <p style="color: #D4A386; max-width: 540px; margin: 0 auto 1.5rem;" data-i18n="wiz_success_sub">
+          ${t('wiz_success_sub')}
         </p>
 
         <div style="background: rgba(18, 10, 6, 0.9); border: 1.5px solid rgba(255, 159, 56, 0.3); border-radius: var(--cm-radius-md); padding: 1.25rem; max-width: 440px; margin: 0 auto 2rem;">
-          <div style="font-size: 0.8rem; color: #A89082; text-transform: uppercase; font-weight: 750;">Código Único de Seguimiento</div>
+          <div style="font-size: 0.8rem; color: #A89082; text-transform: uppercase; font-weight: 750;" data-i18n="wiz_tracking_title">${t('wiz_tracking_title')}</div>
           <div style="font-size: 1.85rem; font-weight: 850; font-family: var(--cm-font-mono); color: #FFAE33; margin: 0.35rem 0;">
             ${created.trackingCode}
           </div>
@@ -522,14 +525,14 @@ export const ReportWizard = {
         </div>
 
         <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
-          <button type="button" class="btn btn-sunset" onclick="CivitasApp.navigateTo('incidents')">
-            📋 Ver mis Incidencias
+          <button type="button" class="btn btn-sunset" onclick="CivitasApp.navigateTo('incidents')" data-i18n="wiz_btn_view_incidents">
+            ${t('wiz_btn_view_incidents')}
           </button>
-          <button type="button" class="btn btn-secondary" onclick="CivitasApp.openIncidentDetail('${created.id}')">
-            Ver Detalle del Aviso
+          <button type="button" class="btn btn-secondary" onclick="CivitasApp.openIncidentDetail('${created.id}')" data-i18n="wiz_btn_view_detail">
+            ${t('wiz_btn_view_detail')}
           </button>
-          <button type="button" class="btn btn-secondary" onclick="CivitasApp.navigateTo('home')">
-            Volver al Inicio
+          <button type="button" class="btn btn-secondary" onclick="CivitasApp.navigateTo('home')" data-i18n="wiz_btn_home">
+            ${t('wiz_btn_home')}
           </button>
         </div>
       `;

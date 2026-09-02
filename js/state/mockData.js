@@ -111,7 +111,7 @@ export const MockData = {
       adherentsCount: 7,
       adherentUserIds: ['usr-citizen-1'],
       images: [
-        'https://images.unsplash.com/photo-1584463623578-3012a64703a5?w=800&auto=format&fit=crop&q=80'
+        './img/adoquinado_calle_porta.jpg'
       ],
       resolutionImages: [],
       resolutionNotes: '',

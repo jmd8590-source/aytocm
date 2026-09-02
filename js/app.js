@@ -207,11 +207,20 @@ class CivitasAppController {
       this.renderHeaderControls();
       this.renderCurrentView();
       this._updateDemoBanner();
+      // If modal detail is currently open, re-render it in the new language immediately
+      if (this._currentOpenIncidentId) {
+        const modalBackdrop = document.getElementById('app-modal-backdrop');
+        if (modalBackdrop && modalBackdrop.classList.contains('active')) {
+          this.openIncidentDetail(this._currentOpenIncidentId);
+        }
+      }
     }
     // Update lang switcher buttons in topbar
     document.querySelectorAll('.lang-btn').forEach(btn => {
       btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
     });
+    // Apply static data-i18n attributes across entire DOM
+    I18n.applyTranslations();
   }
 
   // --- Header Controls (Topbar + Sidebar) ---
@@ -455,7 +464,7 @@ class CivitasAppController {
           </div>
 
           <div class="incidents-grid">
-            ${activeIncidents.map(inc => this.renderIncidentCard(inc)).join('')}
+            ${activeIncidents.map(inc => this.renderIncidentCard(I18n.translateIncident(inc), currentUser)).join('')}
           </div>
         </div>
 
@@ -468,7 +477,7 @@ class CivitasAppController {
 
           <div class="activity-panel">
             <div class="activity-item" onclick="CivitasApp.openIncidentDetail('inc-cm-101')">
-              <img src="https://images.unsplash.com/photo-1584463623578-3012a64703a5?w=150&auto=format&fit=crop&q=80" class="activity-thumb" alt="${t('activity_calle_porta')}" />
+              <img src="./img/adoquinado_calle_porta.jpg" class="activity-thumb" alt="${t('activity_calle_porta')}" onerror="this.onerror=null; this.src='./img/adoquinado_calle_porta.jpg';" />
               <div class="activity-details">
                 <div class="activity-title" data-i18n="activity_calle_porta">${t('activity_calle_porta')}</div>
                 <div class="activity-sub"><span class="badge status-en_proceso" style="font-size:0.65rem; padding:0.2rem 0.5rem;" data-i18n="status_en_proceso">${t('status_en_proceso')}</span> · <span data-i18n="activity_hace2h">${t('activity_hace2h')}</span></div>
@@ -538,22 +547,25 @@ class CivitasAppController {
             <h4 style="font-size: 0.95rem; margin-bottom: 0.5rem; color:#FFFFFF; font-weight:800;" data-i18n="map_filter_title">${t('map_filter_title')}</h4>
             <select id="map-category-filter" class="form-control" onchange="CivitasApp.filterMapIncidents(this.value)" style="padding: 0.45rem 0.85rem; font-size: 0.85rem;">
               <option value="all" data-i18n="map_filter_all">${t('map_filter_all')}</option>
-              ${categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('')}
+              ${categories.map(c => `<option value="${c.id}">${I18n.t('cat_' + c.id) || c.name}</option>`).join('')}
             </select>
           </div>
           <div class="map-sidebar-list" id="map-sidebar-incidents">
-            ${store.getIncidents().map(inc => `
+            ${store.getIncidents().map(inc => {
+              const tInc = I18n.translateIncident(inc);
+              return `
               <div class="activity-item" onclick="CivitasApp.openIncidentDetail('${inc.id}')">
                 <div style="flex:1;">
                   <div style="display: flex; justify-content: space-between; margin-bottom: 0.2rem;">
                     <strong style="color: #FFAE33; font-size:0.775rem; font-family:var(--cm-font-mono);">${inc.trackingCode}</strong>
                     <span class="badge status-${inc.status}" style="font-size: 0.625rem; padding:0.18rem 0.45rem;">${this._statusLabel(inc.status)}</span>
                   </div>
-                  <div style="font-weight: 800; color: #FFFFFF; font-size:0.85rem; margin-bottom: 0.2rem;">${inc.title}</div>
-                  <div style="color: #A89082; font-size: 0.725rem;">📍 ${inc.address}</div>
+                  <div style="font-weight: 800; color: #FFFFFF; font-size:0.85rem; margin-bottom: 0.2rem;">${tInc.title}</div>
+                  <div style="color: #A89082; font-size: 0.725rem;">📍 ${tInc.address}</div>
                 </div>
               </div>
-            `).join('')}
+            `;
+            }).join('')}
           </div>
         </div>
       </div>
@@ -622,12 +634,12 @@ class CivitasAppController {
       <!-- Mis Incidencias / Todas — Toggle tabs -->
       <div style="display: flex; gap: 0.5rem; margin-bottom: 1.25rem; flex-wrap: wrap; align-items: center;">
         <button type="button" class="incidents-tab ${!showMine ? 'active' : ''}" onclick="CivitasApp.setIncidentOwnerFilter('all')">
-          🌍 ${I18n.currentLocale === 'en' ? 'All Incidents' : 'Todas las Incidencias'}
+          🌍 ${t('incidents_tab_all')}
           <span style="font-size:0.7rem; background:rgba(255,159,56,0.15); padding:0.1rem 0.4rem; border-radius:999px; margin-left:0.3rem;">${allIncidents.length}</span>
         </button>
         ${currentUser && !currentUser.isDemo ? `
         <button type="button" class="incidents-tab ${showMine ? 'active' : ''}" onclick="CivitasApp.setIncidentOwnerFilter('mine')">
-          👤 ${I18n.currentLocale === 'en' ? 'My Incidents' : 'Mis Incidencias'}
+          👤 ${t('incidents_tab_mine')}
           ${myCount > 0 ? `<span style="font-size:0.7rem; background:rgba(16,185,129,0.2); color:#6EE7B7; padding:0.1rem 0.4rem; border-radius:999px; margin-left:0.3rem;">${myCount}</span>` : ''}
         </button>
         ` : ''}
@@ -645,7 +657,7 @@ class CivitasAppController {
 
           <select class="form-control" style="width: auto; min-width: 180px;" onchange="CivitasApp.applyIncidentFilter('category', this.value)">
             <option value="all" ${this.incidentFilters.category === 'all' ? 'selected' : ''} data-i18n="incidents_filter_all_cats">${t('incidents_filter_all_cats')}</option>
-            ${categories.map(c => `<option value="${c.id}" ${this.incidentFilters.category === c.id ? 'selected' : ''}>${c.name}</option>`).join('')}
+            ${categories.map(c => `<option value="${c.id}" ${this.incidentFilters.category === c.id ? 'selected' : ''}>${I18n.t('cat_' + c.id) || c.name}</option>`).join('')}
           </select>
 
           <select class="form-control" style="width: auto; min-width: 160px;" onchange="CivitasApp.applyIncidentFilter('status', this.value)">
@@ -667,11 +679,11 @@ class CivitasAppController {
             <div class="gem-icon-box gem-lg" style="margin: 0 auto 1rem;">
               ${Icons.get('incidents', 28, '#FFAE33')}
             </div>
-            <h3 data-i18n="incidents_empty_title">${showMine ? (I18n.currentLocale === 'en' ? 'You have not reported any incidents yet' : 'Aún no has comunicado ninguna incidencia') : t('incidents_empty_title')}</h3>
-            <p style="margin-top: 0.25rem; color:#A89082;">${showMine ? (I18n.currentLocale === 'en' ? 'Use the "Report Issue" button to report your first incident.' : 'Usa el botón "Reportar Aviso" para comunicar tu primera incidencia.') : t('incidents_empty_sub')}</p>
-            ${showMine && canReport ? `<button class="btn btn-sunset" style="margin-top:1rem;" onclick="CivitasApp.navigateTo('report')">+ ${I18n.currentLocale === 'en' ? 'Report Incident' : 'Comunicar Aviso'}</button>` : ''}
+            <h3 data-i18n="${showMine ? 'incidents_empty_mine_title' : 'incidents_empty_title'}">${showMine ? t('incidents_empty_mine_title') : t('incidents_empty_title')}</h3>
+            <p style="margin-top: 0.25rem; color:#A89082;" data-i18n="${showMine ? 'incidents_empty_mine_sub' : 'incidents_empty_sub'}">${showMine ? t('incidents_empty_mine_sub') : t('incidents_empty_sub')}</p>
+            ${showMine && canReport ? `<button class="btn btn-sunset" style="margin-top:1rem;" onclick="CivitasApp.navigateTo('report')" data-i18n="incidents_btn_new">${t('incidents_btn_new')}</button>` : ''}
           </div>
-        ` : filtered.map(inc => this.renderIncidentCard(inc, currentUser)).join('')}
+        ` : filtered.map(inc => this.renderIncidentCard(I18n.translateIncident(inc), currentUser)).join('')}
       </div>
     `;
   }
@@ -701,15 +713,15 @@ class CivitasAppController {
   }
 
   renderIncidentCard(inc, currentUser) {
-    const defaultImg = 'https://images.unsplash.com/photo-1517646287270-a5a9ca602e5c?w=800&auto=format&fit=crop&q=80';
+    const defaultImg = './img/adoquinado_calle_porta.jpg';
     const cardImg = inc.images && inc.images.length ? inc.images[0] : defaultImg;
     const t = (k) => I18n.t(k);
     const isOwn = currentUser && inc.citizenId === currentUser.id;
 
     return `
       <div class="incident-card ${isOwn ? 'incident-card-own' : ''}" onclick="CivitasApp.openIncidentDetail('${inc.id}')">
-        ${isOwn ? `<div class="incident-own-badge">👤 ${I18n.currentLocale === 'en' ? 'My Report' : 'Mi Aviso'}</div>` : ''}
-        <img src="${cardImg}" class="incident-card-image" alt="${inc.title}" />
+        ${isOwn ? `<div class="incident-own-badge">👤 ${t('incidents_badge_mine')}</div>` : ''}
+        <img src="${cardImg}" class="incident-card-image" alt="${inc.title}" onerror="this.onerror=null; this.src='./img/adoquinado_calle_porta.jpg';" />
         <div class="incident-meta">
           <span style="font-size: 0.75rem; font-weight: 800; color: #FFAE33; font-family: var(--cm-font-mono);">${inc.trackingCode}</span>
           <span class="badge status-${inc.status}">${this._statusLabel(inc.status)}</span>
@@ -726,8 +738,12 @@ class CivitasAppController {
 
   // --- Modal Detail Views ---
   openIncidentDetail(incidentId) {
-    const incident = store.getState().incidents.find(i => i.id === incidentId);
-    if (!incident) return;
+    this._currentOpenIncidentId = incidentId;
+    const rawIncident = store.getState().incidents.find(i => i.id === incidentId);
+    if (!rawIncident) return;
+
+    // Apply full simultaneous translations for incident details
+    const incident = I18n.translateIncident(rawIncident);
 
     const modalBackdrop = document.getElementById('app-modal-backdrop');
     const modalTitle = document.getElementById('modal-title');
@@ -764,11 +780,11 @@ class CivitasAppController {
             <span style="font-size:0.75rem; color:#FFAE33; font-weight:700;" data-i18n="modal_drag_compare">${t('modal_drag_compare')}</span>
           </h4>
           <div class="before-after-container" id="before-after-box">
-            <img src="${incident.resolutionImages[0]}" class="before-after-img" alt="${t('modal_after_tag')}" />
+            <img src="${incident.resolutionImages[0]}" class="before-after-img" alt="${t('modal_after_tag')}" onerror="this.onerror=null; this.src='./img/adoquinado_calle_porta.jpg';" />
             <span class="before-after-tag after-tag" data-i18n="modal_after_tag">${t('modal_after_tag')}</span>
             
             <div class="before-after-overlay" id="before-after-overlay" style="width: 50%;">
-              <img src="${incident.images[0]}" style="width: 600px; max-width: none; height: 100%; object-fit: cover;" alt="${t('modal_before_tag')}" />
+              <img src="${incident.images[0]}" style="width: 600px; max-width: none; height: 100%; object-fit: cover;" alt="${t('modal_before_tag')}" onerror="this.onerror=null; this.src='./img/adoquinado_calle_porta.jpg';" />
               <span class="before-after-tag before-tag" data-i18n="modal_before_tag">${t('modal_before_tag')}</span>
             </div>
 
@@ -781,7 +797,7 @@ class CivitasAppController {
           <h4 style="font-size: 0.9rem; margin-bottom: 0.5rem; color:#FFFFFF;" data-i18n="modal_photos_title">${t('modal_photos_title')}</h4>
           <div style="display: flex; gap: 0.6rem; overflow-x: auto;">
             ${incident.images.map(img => `
-              <img src="${img}" style="height: 140px; border-radius: var(--cm-radius-md); object-fit: cover; border: 1.5px solid rgba(255, 159, 56, 0.25);" alt="Evidencia" />
+              <img src="${img}" style="height: 140px; border-radius: var(--cm-radius-md); object-fit: cover; border: 1.5px solid rgba(255, 159, 56, 0.25);" alt="Evidencia" onerror="this.onerror=null; this.src='./img/adoquinado_calle_porta.jpg';" />
             `).join('')}
           </div>
         </div>
@@ -910,6 +926,7 @@ class CivitasAppController {
   }
 
   closeModal() {
+    this._currentOpenIncidentId = null;
     const modalBackdrop = document.getElementById('app-modal-backdrop');
     if (modalBackdrop) {
       modalBackdrop.classList.remove('active');

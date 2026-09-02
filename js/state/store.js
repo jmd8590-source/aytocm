@@ -21,6 +21,16 @@ class Store {
         if (parsed.currentMunicipalityId === 'mun-cumbresmayores') {
           // Always clear session on page load — force auth screen on every visit
           parsed.currentUser = null;
+          // Fix any old cached broken images in localStorage
+          if (Array.isArray(parsed.incidents)) {
+            parsed.incidents.forEach(inc => {
+              if (inc.images && Array.isArray(inc.images)) {
+                inc.images = inc.images.map(img => 
+                  (typeof img === 'string' && img.includes('1584463623578')) ? './img/adoquinado_calle_porta.jpg' : img
+                );
+              }
+            });
+          }
           return parsed;
         }
       } catch (e) {

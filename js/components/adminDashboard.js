@@ -1,13 +1,9 @@
-/**
- * CIVITAS - Admin & Municipal Backoffice Component
- * KPIs, Heatmap stats, Resolution time metrics, Kanban board, Operator assignment & Resolution photo evidence
- */
-
 import { store } from '../state/store.js';
 import { IncidentService } from '../services/incidentService.js';
 import { Helpers } from '../utils/helpers.js';
 import { NotificationService } from '../services/notificationService.js';
 import { MockData } from '../state/mockData.js';
+import { I18n } from '../utils/i18n.js';
 
 export const AdminDashboard = {
   currentFilterDepartment: 'all',
@@ -28,19 +24,20 @@ export const AdminDashboard = {
     const inProgressCount = incidents.filter(i => i.status === 'en_proceso').length;
     const pendingCount = incidents.filter(i => ['recibida', 'validando', 'asignada'].includes(i.status)).length;
     const resolutionRate = totalIncidents > 0 ? Math.round((resolvedCount / totalIncidents) * 100) : 0;
+    const t = (k) => I18n.t(k);
 
     container.innerHTML = `
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
         <div>
-          <h2>Panel de Gestión Municipal</h2>
-          <p style="font-size: 0.9rem;">Supervisión en tiempo real, asignación técnica y resolución de incidencias urbanas.</p>
+          <h2 data-i18n="admin_title">${t('admin_title')}</h2>
+          <p style="font-size: 0.9rem; color:#D4A386;" data-i18n="admin_subtitle">${t('admin_subtitle')}</p>
         </div>
         <div style="display: flex; gap: 0.75rem;">
           <button type="button" class="btn btn-secondary btn-sm" onclick="CivitasApp.admin.exportReport()">
-            📊 Exportar Informe PDF/CSV
+            📊 ${I18n.currentLocale === 'en' ? 'Export PDF/CSV Report' : 'Exportar Informe PDF/CSV'}
           </button>
-          <button type="button" class="btn btn-outline btn-sm" onclick="CivitasApp.navigateTo('audit')">
-            🛡️ Registro de Auditoría
+          <button type="button" class="btn btn-sunset btn-sm" onclick="CivitasApp.navigateTo('audit')">
+            🛡️ ${I18n.currentLocale === 'en' ? 'Audit Log' : 'Registro de Auditoría'}
           </button>
         </div>
       </div>
@@ -48,34 +45,34 @@ export const AdminDashboard = {
       <!-- KPI Metrics Summary -->
       <div class="kpi-grid">
         <div class="kpi-card">
-          <div class="kpi-icon" style="background-color: var(--civ-primary-50); color: var(--civ-primary-600);">📋</div>
+          <div class="kpi-icon" style="background-color: rgba(255,159,56,0.15); color: #FFAE33;">📋</div>
           <div>
             <div class="kpi-value">${totalIncidents}</div>
-            <div class="kpi-label">Total Incidencias</div>
+            <div class="kpi-label">${I18n.currentLocale === 'en' ? 'Total Incidents' : 'Total Incidencias'}</div>
           </div>
         </div>
 
         <div class="kpi-card">
-          <div class="kpi-icon" style="background-color: var(--civ-amber-50); color: var(--civ-amber-600);">⏳</div>
+          <div class="kpi-icon" style="background-color: rgba(245,158,11,0.15); color: #F59E0B;">⏳</div>
           <div>
             <div class="kpi-value">${pendingCount}</div>
-            <div class="kpi-label">Pendientes / Asignadas</div>
+            <div class="kpi-label">${I18n.currentLocale === 'en' ? 'Pending / Assigned' : 'Pendientes / Asignadas'}</div>
           </div>
         </div>
 
         <div class="kpi-card">
-          <div class="kpi-icon" style="background-color: var(--civ-emerald-50); color: var(--civ-emerald-600);">✅</div>
+          <div class="kpi-icon" style="background-color: rgba(16,185,129,0.15); color: #10B981;">✅</div>
           <div>
             <div class="kpi-value">${resolvedCount} (${resolutionRate}%)</div>
-            <div class="kpi-label">Tasa de Resolución</div>
+            <div class="kpi-label">${I18n.currentLocale === 'en' ? 'Resolution Rate' : 'Tasa de Resolución'}</div>
           </div>
         </div>
 
         <div class="kpi-card">
-          <div class="kpi-icon" style="background-color: var(--civ-rose-50); color: var(--civ-rose-600);">⚡</div>
+          <div class="kpi-icon" style="background-color: rgba(244,63,94,0.15); color: #F43F5E;">⚡</div>
           <div>
             <div class="kpi-value">18.4 h</div>
-            <div class="kpi-label">Tiempo Medio Resolución (TMR)</div>
+            <div class="kpi-label">${I18n.currentLocale === 'en' ? 'Avg. Resolution Time' : 'Tiempo Medio Resolución (TMR)'}</div>
           </div>
         </div>
       </div>
