@@ -522,11 +522,11 @@ export const ReportWizard = {
         </div>
 
         <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
-          <button type="button" class="btn btn-sunset" onclick="CivitasApp.openIncidentDetail('${created.id}')">
-            Ver Detalle del Aviso
+          <button type="button" class="btn btn-sunset" onclick="CivitasApp.navigateTo('incidents')">
+            📋 Ver mis Incidencias
           </button>
-          <button type="button" class="btn btn-secondary" onclick="CivitasApp.navigateTo('map')">
-            Ver en el Plano
+          <button type="button" class="btn btn-secondary" onclick="CivitasApp.openIncidentDetail('${created.id}')">
+            Ver Detalle del Aviso
           </button>
           <button type="button" class="btn btn-secondary" onclick="CivitasApp.navigateTo('home')">
             Volver al Inicio

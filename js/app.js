@@ -33,8 +33,10 @@ class CivitasAppController {
     this.incidentFilters = {
       category: 'all',
       status: 'all',
-      search: ''
+      search: '',
+      owner: 'all'  // 'all' | 'mine'
     };
+    this._storeUnsubscribe = null; // Track subscription to avoid leaks
   }
 
   init() {
@@ -115,8 +117,12 @@ class CivitasAppController {
     // Re-render header with user info
     this.renderHeaderControls();
 
-    // Reactive subscription
-    store.subscribe(() => {
+    // Reactive subscription — unsubscribe any previous one first to avoid leaks
+    if (this._storeUnsubscribe) {
+      this._storeUnsubscribe();
+      this._storeUnsubscribe = null;
+    }
+    this._storeUnsubscribe = store.subscribe(() => {
       this.renderHeaderControls();
       this.renderCurrentView();
     });
@@ -287,11 +293,16 @@ class CivitasAppController {
 
   logout() {
     this.closeModal();
+    // Unsubscribe store listener before logging out
+    if (this._storeUnsubscribe) {
+      this._storeUnsubscribe();
+      this._storeUnsubscribe = null;
+    }
     AuthService.logout();
     // Reset state
     this.currentRoute = 'home';
-    this.incidentFilters = { category: 'all', status: 'all', search: '' };
-    window.location.hash = '';
+    this.incidentFilters = { category: 'all', status: 'all', search: '', owner: 'all' };
+    window.location.hash = '';;
     // Show auth screen
     this._showAuthScreen();
   }
@@ -315,6 +326,11 @@ class CivitasAppController {
     if (route === 'admin' && !AuthService.canAccessAdmin()) {
       NotificationService.showToast('🔒 Acceso Restringido', I18n.t('restrict_citizen_status'), 'warning');
       return;
+    }
+
+    // Reset incident filters when navigating to incidents so new incidents are always visible
+    if (route === 'incidents') {
+      this.incidentFilters = { category: 'all', status: 'all', search: '', owner: 'all' };
     }
 
     this.currentRoute = route;
@@ -558,8 +574,20 @@ class CivitasAppController {
 
   renderIncidentsView(container) {
     const categories = store.getState().categories;
-    const incidents = store.getIncidents();
+    const allIncidents = store.getIncidents();
+    const currentUser = store.getState().currentUser;
     const t = (k) => I18n.t(k);
+
+    // 'mine' filter: show only current user's incidents
+    const showMine = this.incidentFilters.owner === 'mine';
+    let incidents = allIncidents;
+
+    if (showMine && currentUser) {
+      incidents = allIncidents.filter(inc =>
+        inc.citizenId === currentUser.id ||
+        (inc.adherentUserIds && inc.adherentUserIds.includes(currentUser.id))
+      );
+    }
 
     const filtered = incidents.filter(inc => {
       const matchCat = this.incidentFilters.category === 'all' || inc.category === this.incidentFilters.category;
@@ -572,6 +600,7 @@ class CivitasAppController {
     });
 
     const canReport = AuthService.canCreateIncident();
+    const myCount = currentUser ? allIncidents.filter(i => i.citizenId === currentUser.id).length : 0;
 
     container.innerHTML = `
       <div class="feed-header-bar">
@@ -582,6 +611,20 @@ class CivitasAppController {
         ${canReport ? `
         <button class="btn btn-sunset" onclick="CivitasApp.navigateTo('report')" data-i18n="incidents_btn_new">
           ${t('incidents_btn_new')}
+        </button>
+        ` : ''}
+      </div>
+
+      <!-- Mis Incidencias / Todas — Toggle tabs -->
+      <div style="display: flex; gap: 0.5rem; margin-bottom: 1.25rem; flex-wrap: wrap; align-items: center;">
+        <button type="button" class="incidents-tab ${!showMine ? 'active' : ''}" onclick="CivitasApp.setIncidentOwnerFilter('all')">
+          🌍 ${I18n.currentLocale === 'en' ? 'All Incidents' : 'Todas las Incidencias'}
+          <span style="font-size:0.7rem; background:rgba(255,159,56,0.15); padding:0.1rem 0.4rem; border-radius:999px; margin-left:0.3rem;">${allIncidents.length}</span>
+        </button>
+        ${currentUser && !currentUser.isDemo ? `
+        <button type="button" class="incidents-tab ${showMine ? 'active' : ''}" onclick="CivitasApp.setIncidentOwnerFilter('mine')">
+          👤 ${I18n.currentLocale === 'en' ? 'My Incidents' : 'Mis Incidencias'}
+          ${myCount > 0 ? `<span style="font-size:0.7rem; background:rgba(16,185,129,0.2); color:#6EE7B7; padding:0.1rem 0.4rem; border-radius:999px; margin-left:0.3rem;">${myCount}</span>` : ''}
         </button>
         ` : ''}
       </div>
@@ -620,13 +663,29 @@ class CivitasAppController {
             <div class="gem-icon-box gem-lg" style="margin: 0 auto 1rem;">
               ${Icons.get('incidents', 28, '#FFAE33')}
             </div>
-            <h3 data-i18n="incidents_empty_title">${t('incidents_empty_title')}</h3>
-            <p style="margin-top: 0.25rem; color:#A89082;" data-i18n="incidents_empty_sub">${t('incidents_empty_sub')}</p>
+            <h3 data-i18n="incidents_empty_title">${showMine ? (I18n.currentLocale === 'en' ? 'You have not reported any incidents yet' : 'Aún no has comunicado ninguna incidencia') : t('incidents_empty_title')}</h3>
+            <p style="margin-top: 0.25rem; color:#A89082;">${showMine ? (I18n.currentLocale === 'en' ? 'Use the "Report Issue" button to report your first incident.' : 'Usa el botón "Reportar Aviso" para comunicar tu primera incidencia.') : t('incidents_empty_sub')}</p>
+            ${showMine && canReport ? `<button class="btn btn-sunset" style="margin-top:1rem;" onclick="CivitasApp.navigateTo('report')">+ ${I18n.currentLocale === 'en' ? 'Report Incident' : 'Comunicar Aviso'}</button>` : ''}
           </div>
-        ` : filtered.map(inc => this.renderIncidentCard(inc)).join('')}
+        ` : filtered.map(inc => this.renderIncidentCard(inc, currentUser)).join('')}
       </div>
     `;
   }
+
+  setIncidentOwnerFilter(owner) {
+    this.incidentFilters.owner = owner;
+    if (this.currentRoute === 'incidents') {
+      this.renderIncidentsView(document.getElementById('workspace-content-area'));
+    }
+  }
+
+  applyIncidentFilter(key, value) {
+    this.incidentFilters[key] = value;
+    if (this.currentRoute === 'incidents') {
+      this.renderIncidentsView(document.getElementById('workspace-content-area'));
+    }
+  }
+
 
   _statusLabel(status) {
     const map = {
@@ -637,13 +696,15 @@ class CivitasAppController {
     return I18n.t(map[status] || status);
   }
 
-  renderIncidentCard(inc) {
+  renderIncidentCard(inc, currentUser) {
     const defaultImg = 'https://images.unsplash.com/photo-1517646287270-a5a9ca602e5c?w=800&auto=format&fit=crop&q=80';
     const cardImg = inc.images && inc.images.length ? inc.images[0] : defaultImg;
     const t = (k) => I18n.t(k);
+    const isOwn = currentUser && inc.citizenId === currentUser.id;
 
     return `
-      <div class="incident-card" onclick="CivitasApp.openIncidentDetail('${inc.id}')">
+      <div class="incident-card ${isOwn ? 'incident-card-own' : ''}" onclick="CivitasApp.openIncidentDetail('${inc.id}')">
+        ${isOwn ? `<div class="incident-own-badge">👤 ${I18n.currentLocale === 'en' ? 'My Report' : 'Mi Aviso'}</div>` : ''}
         <img src="${cardImg}" class="incident-card-image" alt="${inc.title}" />
         <div class="incident-meta">
           <span style="font-size: 0.75rem; font-weight: 800; color: #FFAE33; font-family: var(--cm-font-mono);">${inc.trackingCode}</span>
@@ -657,13 +718,6 @@ class CivitasAppController {
         </div>
       </div>
     `;
-  }
-
-  applyIncidentFilter(key, value) {
-    this.incidentFilters[key] = value;
-    if (this.currentRoute === 'incidents') {
-      this.renderIncidentsView(document.getElementById('workspace-content-area'));
-    }
   }
 
   // --- Modal Detail Views ---
