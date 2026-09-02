@@ -23,11 +23,11 @@
   <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
 
   <!-- Civitas VibeCut Theme Architecture -->
-  <link rel="stylesheet" href="./css/variables.css?v=20260901_svg" />
-  <link rel="stylesheet" href="./css/base.css?v=20260901_svg" />
-  <link rel="stylesheet" href="./css/components.css?v=20260901_svg" />
-  <link rel="stylesheet" href="./css/layout.css?v=20260901_svg" />
-  <link rel="stylesheet" href="./css/views.css?v=20260901_svg" />
+  <link rel="stylesheet" href="./css/variables.css?v=20260902_auth" />
+  <link rel="stylesheet" href="./css/base.css?v=20260902_auth" />
+  <link rel="stylesheet" href="./css/components.css?v=20260902_auth" />
+  <link rel="stylesheet" href="./css/layout.css?v=20260902_auth" />
+  <link rel="stylesheet" href="./css/views.css?v=20260902_auth" />
 </head>
 <body>
   <!-- Global Vector SVG Gradients Defs -->
@@ -36,38 +36,19 @@
   <!-- Accessibility Skip Link -->
   <a href="#workspace-content-area" class="skip-link">Saltar al contenido principal</a>
 
-  <!-- Top Persona / Role Switcher Strip (High-Contrast, Vibrant Glowing Badges) -->
-  <aside class="role-bar" aria-label="Selector de rol de prueba">
-    <div class="role-bar-group">
-      <div class="role-bar-label">
-        <span>🎭</span>
-        <span>MODO DEMO / ROL:</span>
-      </div>
-      <button type="button" class="role-pill active" data-role="ROLE_CITIZEN" onclick="CivitasApp.switchRole('ROLE_CITIZEN')">
-        <span style="font-size:0.95rem;">🙋</span>
-        <span>Vecin@ de Cumbres</span>
-      </button>
-      <button type="button" class="role-pill" data-role="ROLE_EMPLOYEE" onclick="CivitasApp.switchRole('ROLE_EMPLOYEE')">
-        <span style="font-size:0.95rem;">🛠️</span>
-        <span>Operario Municipal</span>
-      </button>
-      <button type="button" class="role-pill" data-role="ROLE_MUNICIPAL_ADMIN" onclick="CivitasApp.switchRole('ROLE_MUNICIPAL_ADMIN')">
-        <span style="font-size:0.95rem;">🏛️</span>
-        <span>Concejalía / Obras</span>
-      </button>
-      <button type="button" class="role-pill" data-role="ROLE_SUPERADMIN" onclick="CivitasApp.switchRole('ROLE_SUPERADMIN')">
-        <span style="font-size:0.95rem;">⚡</span>
-        <span>SuperAdmin</span>
-      </button>
-    </div>
-    <div style="font-size: 0.825rem; color: #FFE5C4; font-weight: 750; letter-spacing: 0.02em; text-shadow: 0 1px 2px rgba(0,0,0,0.5);">
-      📍 Cumbres Mayores (Huelva) — Sierra de Aracena
-    </div>
-  </aside>
+  <!-- ============================================================
+       AUTH SCREEN — Pantalla de entrada / selección de perfil
+       Visible cuando no hay sesión activa
+       ============================================================ -->
+  <div id="auth-screen-container" style="display:none; min-height:100dvh; width:100%; align-items:center; justify-content:center; background: var(--bg-app);">
+    <!-- Populated dynamically by AuthScreen.render() -->
+  </div>
 
-  <!-- Master Luxury Floating Dashboard Frame (VibeCut Style) -->
-  <div class="app-shell">
-    <!-- Left Glass Sidebar with Bespoke Vector Icons -->
+  <!-- ============================================================
+       APP SHELL — Aplicación principal (oculta hasta autenticar)
+       ============================================================ -->
+  <div class="app-shell" style="display:none;">
+    <!-- Left Glass Sidebar -->
     <aside class="app-sidebar" role="navigation" aria-label="Menú principal">
       <div>
         <!-- Sidebar Brand -->
@@ -76,8 +57,8 @@
             <!-- Castle SVG injected -->
           </div>
           <div>
-            <div class="sidebar-brand-title">Cumbres Mayores</div>
-            <div class="sidebar-brand-sub">Ayuntamiento Oficial</div>
+            <div class="sidebar-brand-title" data-i18n="sidebar_brand_title">Cumbres Mayores</div>
+            <div class="sidebar-brand-sub" data-i18n="sidebar_brand_sub">Ayuntamiento Oficial</div>
           </div>
         </div>
 
@@ -86,43 +67,43 @@
           <li>
             <button type="button" class="sidebar-link active" data-route="home" onclick="CivitasApp.navigateTo('home')">
               <div class="sidebar-link-icon-box" data-icon="home"></div>
-              <span>Inicio</span>
+              <span data-i18n="nav_home">Inicio</span>
             </button>
           </li>
           <li>
             <button type="button" class="sidebar-link" data-route="report" onclick="CivitasApp.navigateTo('report')">
               <div class="sidebar-link-icon-box" data-icon="report"></div>
-              <span>Reportar Aviso</span>
+              <span data-i18n="nav_report">Reportar Aviso</span>
             </button>
           </li>
           <li>
             <button type="button" class="sidebar-link" data-route="map" onclick="CivitasApp.navigateTo('map')">
               <div class="sidebar-link-icon-box" data-icon="map"></div>
-              <span>Plano Municipal</span>
+              <span data-i18n="nav_map">Plano Municipal</span>
             </button>
           </li>
           <li>
             <button type="button" class="sidebar-link" data-route="incidents" onclick="CivitasApp.navigateTo('incidents')">
               <div class="sidebar-link-icon-box" data-icon="incidents"></div>
-              <span>Incidencias</span>
+              <span data-i18n="nav_incidents">Incidencias</span>
             </button>
           </li>
           <li>
             <button type="button" class="sidebar-link" data-route="suggestions" onclick="CivitasApp.navigateTo('suggestions')">
               <div class="sidebar-link-icon-box" data-icon="bulb"></div>
-              <span>Presupuestos</span>
+              <span data-i18n="nav_suggestions">Presupuestos</span>
             </button>
           </li>
           <li id="sidebar-admin-item" style="display: none;">
             <button type="button" class="sidebar-link" data-route="admin" onclick="CivitasApp.navigateTo('admin')">
               <div class="sidebar-link-icon-box" data-icon="shield"></div>
-              <span>Gestión Municipal</span>
+              <span data-i18n="nav_admin">Gestión Municipal</span>
             </button>
           </li>
           <li>
             <button type="button" class="sidebar-link" data-route="audit" onclick="CivitasApp.navigateTo('audit')">
               <div class="sidebar-link-icon-box" data-icon="audit"></div>
-              <span>Auditoría</span>
+              <span data-i18n="nav_audit">Auditoría</span>
             </button>
           </li>
         </ul>
@@ -132,9 +113,9 @@
       <div>
         <div class="sidebar-cta-card">
           <div class="gem-icon-box" style="margin: 0 auto 0.5rem; width: 40px; height: 40px;" id="sidebar-cta-icon"></div>
-          <div style="font-weight: 850; font-size: 0.875rem; color: #FFFFFF; margin-bottom: 0.2rem;">Participación Vecinal</div>
-          <p style="font-size: 0.725rem; color: #D4A386; margin-bottom: 0.85rem;">Tu aviso ayuda a mantener en perfecto estado nuestro pueblo.</p>
-          <button type="button" class="btn btn-sunset btn-sm" style="width: 100%;" onclick="CivitasApp.navigateTo('report')">
+          <div style="font-weight: 850; font-size: 0.875rem; color: #FFFFFF; margin-bottom: 0.2rem;" data-i18n="sidebar_cta_title">Participación Vecinal</div>
+          <p style="font-size: 0.725rem; color: #D4A386; margin-bottom: 0.85rem;" data-i18n="sidebar_cta_sub">Tu aviso ayuda a mantener en perfecto estado nuestro pueblo.</p>
+          <button type="button" class="btn btn-sunset btn-sm" style="width: 100%;" onclick="CivitasApp.navigateTo('report')" data-i18n="sidebar_cta_btn">
             + Nuevo Aviso
           </button>
         </div>
@@ -148,23 +129,40 @@
         <!-- Search Bar Input (Pill) -->
         <div class="topbar-search">
           <span class="topbar-search-icon" id="topbar-search-icon"></span>
-          <input type="text" placeholder="Buscar por calle, avería, castillo, farolas o sendero..." 
+          <input type="text" data-i18n-placeholder="topbar_search_ph"
+                 placeholder="Buscar por calle, avería, castillo, farolas..." 
                  oninput="if(CivitasApp.currentRoute==='incidents'){CivitasApp.applyIncidentFilter('search', this.value)}" />
         </div>
 
-        <!-- Topbar Profile & Notifications -->
+        <!-- Topbar Actions: Live pulse + Lang Switcher + User Badge + Logout -->
         <div class="topbar-actions">
+          <!-- Live Status -->
           <div class="live-pulse">
             <div class="live-pulse-dot"></div>
-            <span>Servicios Operativos</span>
+            <span data-i18n="topbar_services">Servicios Operativos</span>
           </div>
 
-          <!-- Current User Profile Avatar Pill (High-Contrast & Large) -->
-          <div id="header-user-badge" style="cursor: pointer;" onclick="CivitasApp.switchRole('ROLE_CITIZEN')">
+          <!-- Language Switcher -->
+          <div id="topbar-lang-switcher" class="topbar-lang-switcher">
+            <!-- Populated dynamically -->
+          </div>
+
+          <!-- Current User Profile Avatar Pill -->
+          <div id="header-user-badge">
+            <!-- Populated dynamically -->
+          </div>
+
+          <!-- Logout Button (top-right) -->
+          <div id="topbar-logout-btn" class="topbar-logout">
             <!-- Populated dynamically -->
           </div>
         </div>
       </header>
+
+      <!-- Demo Mode Banner (only for demo users) -->
+      <div id="demo-mode-banner" class="demo-banner" style="display:none;" role="alert">
+        <!-- Populated dynamically -->
+      </div>
 
       <!-- Dynamic Inner View Workspace -->
       <main id="workspace-content-area" class="workspace-content" role="main" tabindex="-1">
@@ -174,36 +172,36 @@
   </div>
 
   <!-- Mobile Bottom Navigation Bar -->
-  <nav class="bottom-nav" aria-label="Navegación móvil">
+  <nav class="bottom-nav" aria-label="Navegación móvil" style="display:none;">
     <ul class="bottom-nav-list">
       <li>
         <button class="bottom-nav-item active" data-route="home" onclick="CivitasApp.navigateTo('home')">
           <span id="mob-icon-home"></span>
-          <span>Inicio</span>
+          <span data-i18n="nav_mob_home">Inicio</span>
         </button>
       </li>
       <li>
         <button class="bottom-nav-item" data-route="report" onclick="CivitasApp.navigateTo('report')">
           <span id="mob-icon-report"></span>
-          <span>Avisar</span>
+          <span data-i18n="nav_mob_report">Avisar</span>
         </button>
       </li>
       <li>
         <button class="bottom-nav-item" data-route="map" onclick="CivitasApp.navigateTo('map')">
           <span id="mob-icon-map"></span>
-          <span>Plano</span>
+          <span data-i18n="nav_mob_map">Plano</span>
         </button>
       </li>
       <li>
         <button class="bottom-nav-item" data-route="incidents" onclick="CivitasApp.navigateTo('incidents')">
           <span id="mob-icon-incidents"></span>
-          <span>Avisos</span>
+          <span data-i18n="nav_mob_incidents">Avisos</span>
         </button>
       </li>
       <li>
         <button class="bottom-nav-item" data-route="suggestions" onclick="CivitasApp.navigateTo('suggestions')">
           <span id="mob-icon-bulb"></span>
-          <span>Ideas</span>
+          <span data-i18n="nav_mob_suggestions">Ideas</span>
         </button>
       </li>
     </ul>
@@ -229,6 +227,6 @@
   <div id="toast-container" aria-live="assertive" aria-atomic="true"></div>
 
   <!-- App Bootstrap JS -->
-  <script type="module" src="./js/app.js?v=20260901_svg"></script>
+  <script type="module" src="./js/app.js?v=20260902_auth"></script>
 </body>
 </html>

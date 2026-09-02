@@ -557,3 +557,512 @@ textarea.form-control {
   from { transform: translateY(20px) scale(0.95); opacity: 0; }
   to { transform: translateY(0) scale(1); opacity: 1; }
 }
+
+/* ==========================================================================
+   AUTH SCREEN — Pantalla de entrada (fullscreen premium)
+   ========================================================================== */
+
+.auth-screen {
+  position: relative;
+  width: 100%;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  overflow: hidden;
+  background: radial-gradient(ellipse 80% 80% at 50% -10%, rgba(255,122,24,0.18) 0%, transparent 60%),
+              var(--bg-app);
+}
+
+/* Decorative ambient glows */
+.auth-glow {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+  z-index: 0;
+}
+.auth-glow-1 {
+  width: 500px; height: 500px;
+  top: -120px; left: -80px;
+  background: radial-gradient(circle, rgba(255,122,24,0.14) 0%, transparent 70%);
+  animation: glowPulse 6s ease-in-out infinite;
+}
+.auth-glow-2 {
+  width: 380px; height: 380px;
+  bottom: -80px; right: -60px;
+  background: radial-gradient(circle, rgba(139,92,246,0.12) 0%, transparent 70%);
+  animation: glowPulse 8s ease-in-out infinite reverse;
+}
+.auth-glow-3 {
+  width: 250px; height: 250px;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(16,185,129,0.06) 0%, transparent 70%);
+  animation: glowPulse 10s ease-in-out infinite;
+}
+
+@keyframes glowPulse {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.08); }
+}
+
+/* Auth Language Switcher (top of auth screen) */
+.auth-lang-switcher {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  display: flex;
+  gap: 0.4rem;
+  z-index: 10;
+}
+
+/* Auth Card */
+.auth-card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 620px;
+  background: rgba(18, 10, 6, 0.88);
+  border: 1.5px solid rgba(255, 159, 56, 0.22);
+  border-radius: var(--cm-radius-xl);
+  padding: 2.5rem 2rem;
+  box-shadow: 0 32px 80px rgba(0,0,0,0.7), 0 0 60px rgba(255,122,24,0.1);
+  backdrop-filter: blur(32px) saturate(180%);
+  animation: authCardIn 0.5s cubic-bezier(0.16,1,0.3,1) both;
+}
+
+@keyframes authCardIn {
+  from { opacity: 0; transform: translateY(28px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Auth Header */
+.auth-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+.auth-logo {
+  font-size: 3rem;
+  margin-bottom: 0.75rem;
+  filter: drop-shadow(0 0 16px rgba(255,174,51,0.5));
+}
+.auth-title {
+  font-family: var(--cm-font-heading);
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: #FFF7F2;
+  margin-bottom: 0.4rem;
+  letter-spacing: -0.03em;
+}
+.auth-location {
+  font-size: 0.8rem;
+  color: #FFAE33;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  margin-bottom: 0.6rem;
+}
+.auth-subtitle {
+  font-size: 0.9rem;
+  color: #A89082;
+  font-weight: 500;
+  max-width: 460px;
+  margin: 0 auto;
+  line-height: 1.5;
+}
+
+/* Profile Grid */
+.profile-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.85rem;
+  margin-bottom: 1.25rem;
+}
+
+@media (max-width: 500px) {
+  .profile-grid { grid-template-columns: 1fr; }
+}
+
+/* Profile Button */
+.profile-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 1.25rem 0.85rem;
+  border-radius: var(--cm-radius-lg);
+  border: 1.5px solid var(--profile-border, rgba(255,159,56,0.25));
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16,1,0.3,1);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+}
+.profile-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 0%, var(--profile-glow, rgba(255,122,24,0.1)) 0%, transparent 65%);
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+.profile-btn:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.5), 0 0 20px var(--profile-glow, rgba(255,122,24,0.2));
+  border-color: var(--profile-border);
+}
+.profile-btn:hover::before { opacity: 1; }
+.profile-btn:active { transform: translateY(0) scale(0.99); }
+
+.profile-emoji {
+  font-size: 1.75rem;
+  display: block;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.4));
+}
+.profile-label {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: #FFF7F2;
+  text-align: center;
+  line-height: 1.2;
+}
+.profile-sub {
+  font-size: 0.72rem;
+  color: #A89082;
+  font-weight: 500;
+  text-align: center;
+}
+
+/* Auth Divider */
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  color: #6E5B50;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+.auth-divider::before,
+.auth-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(255,159,56,0.12);
+}
+
+/* Demo Button */
+.demo-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  width: 100%;
+  padding: 0.9rem 1.5rem;
+  background: rgba(107, 114, 128, 0.12);
+  border: 1.5px dashed rgba(107, 114, 128, 0.4);
+  border-radius: var(--cm-radius-full);
+  color: #A89082;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--cm-font-sans);
+}
+.demo-btn:hover {
+  background: rgba(107, 114, 128, 0.2);
+  border-color: rgba(107, 114, 128, 0.6);
+  color: #E5D2C7;
+  transform: translateY(-1px);
+}
+
+/* ==========================================================================
+   AUTH MODAL — Login / Register Modal
+   ========================================================================== */
+
+.auth-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 3, 1, 0.85);
+  backdrop-filter: blur(10px);
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.auth-modal {
+  width: 100%;
+  max-width: 460px;
+  background: rgba(18, 10, 6, 0.98);
+  border: 1.5px solid rgba(255, 159, 56, 0.25);
+  border-radius: var(--cm-radius-xl);
+  box-shadow: 0 32px 80px rgba(0,0,0,0.8), 0 0 40px rgba(255,122,24,0.1);
+  overflow: hidden;
+}
+
+@keyframes authModalIn {
+  from { opacity: 0; transform: translateY(20px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.auth-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.35rem 1.5rem 0.85rem;
+  border-bottom: 1px solid rgba(255,159,56,0.1);
+}
+
+.auth-modal-close {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--cm-radius-sm);
+  background: rgba(255,159,56,0.08);
+  border: 1px solid rgba(255,159,56,0.15);
+  color: #A89082;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+  font-family: var(--cm-font-sans);
+}
+.auth-modal-close:hover {
+  background: rgba(255,159,56,0.15);
+  color: #FFF7F2;
+}
+
+/* Auth Tabs */
+.auth-tabs {
+  display: flex;
+  border-bottom: 1px solid rgba(255,159,56,0.1);
+}
+.auth-tab {
+  flex: 1;
+  padding: 0.85rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #A89082;
+  background: transparent;
+  border: none;
+  border-bottom: 2.5px solid transparent;
+  cursor: pointer;
+  transition: all 0.18s;
+  font-family: var(--cm-font-sans);
+}
+.auth-tab:hover { color: #FFF7F2; }
+.auth-tab.active {
+  color: #FFAE33;
+  border-bottom-color: #FF7A18;
+  background: rgba(255,122,24,0.05);
+}
+
+/* Auth Form */
+.auth-form {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.form-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #D4A386;
+  letter-spacing: 0.01em;
+}
+.auth-input {
+  width: 100%;
+  padding: 0.7rem 0.95rem;
+  background: rgba(12, 7, 4, 0.9);
+  border: 1.5px solid rgba(255,159,56,0.2);
+  border-radius: var(--cm-radius-md);
+  color: #FFF7F2;
+  font-size: 0.9rem;
+  font-family: var(--cm-font-sans);
+  transition: border-color 0.15s, box-shadow 0.15s;
+  box-sizing: border-box;
+}
+.auth-input:focus {
+  outline: none;
+  border-color: #FF7A18;
+  box-shadow: 0 0 0 3px rgba(255,122,24,0.15);
+}
+.auth-input::placeholder { color: #6E5B50; }
+
+.auth-input-wrapper {
+  position: relative;
+}
+.auth-toggle-pw {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  color: #6E5B50;
+  transition: color 0.15s;
+  padding: 0.2rem;
+}
+.auth-toggle-pw:hover { color: #FFAE33; }
+.auth-input-wrapper .auth-input { padding-right: 2.5rem; }
+
+.auth-code-hint {
+  font-size: 0.72rem;
+  color: #F59E0B;
+  font-weight: 600;
+  padding: 0.35rem 0.65rem;
+  background: rgba(245,158,11,0.1);
+  border-radius: var(--cm-radius-xs);
+  border-left: 2.5px solid #F59E0B;
+}
+
+.auth-field-error {
+  font-size: 0.75rem;
+  color: #FB7185;
+  font-weight: 600;
+  min-height: 1rem;
+}
+.auth-global-error {
+  text-align: center;
+  padding: 0.3rem;
+  background: rgba(251,113,133,0.1);
+  border-radius: var(--cm-radius-sm);
+}
+.auth-global-error:empty { display: none; }
+
+/* Auth Submit Button */
+.btn-auth-submit {
+  width: 100%;
+  padding: 0.9rem 1.5rem;
+  background: linear-gradient(135deg, #FF5722 0%, var(--submit-color, #FF7A18) 100%);
+  color: #FFFFFF;
+  font-weight: 800;
+  font-size: 0.95rem;
+  border: none;
+  border-radius: var(--cm-radius-full);
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 18px var(--submit-glow, rgba(255,122,24,0.4));
+  font-family: var(--cm-font-sans);
+  letter-spacing: 0.01em;
+  margin-top: 0.25rem;
+}
+.btn-auth-submit:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 28px var(--submit-glow, rgba(255,122,24,0.5));
+  filter: brightness(1.08);
+}
+.btn-auth-submit:active { transform: translateY(0) scale(0.99); }
+
+/* ==========================================================================
+   LOGOUT BUTTON — Esquina superior derecha del topbar
+   ========================================================================== */
+
+.btn-logout {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.45rem 0.95rem;
+  background: rgba(251,113,133,0.1);
+  border: 1.5px solid rgba(251,113,133,0.25);
+  border-radius: var(--cm-radius-full);
+  color: #FB7185;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.18s;
+  font-family: var(--cm-font-sans);
+  white-space: nowrap;
+  letter-spacing: 0.01em;
+}
+.btn-logout:hover {
+  background: rgba(251,113,133,0.2);
+  border-color: rgba(251,113,133,0.5);
+  color: #FFF7F2;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(251,113,133,0.2);
+}
+.btn-logout:active { transform: translateY(0) scale(0.98); }
+
+.topbar-logout {
+  display: flex;
+  align-items: center;
+}
+
+/* ==========================================================================
+   LANGUAGE SWITCHER — topbar ES/EN
+   ========================================================================== */
+
+.lang-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.35rem 0.65rem;
+  background: rgba(255,159,56,0.06);
+  border: 1px solid rgba(255,159,56,0.15);
+  border-radius: var(--cm-radius-full);
+  color: #A89082;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: var(--cm-font-sans);
+  letter-spacing: 0.02em;
+}
+.lang-btn:hover {
+  background: rgba(255,159,56,0.12);
+  color: #FFAE33;
+  border-color: rgba(255,159,56,0.3);
+}
+.lang-btn.active {
+  background: rgba(255,122,24,0.18);
+  border-color: rgba(255,122,24,0.45);
+  color: #FFAE33;
+  box-shadow: 0 0 8px rgba(255,122,24,0.2);
+}
+
+.topbar-lang-switcher {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+/* ==========================================================================
+   DEMO MODE BANNER — Barra de aviso para usuarios demo
+   ========================================================================== */
+
+.demo-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.55rem 1rem;
+  background: rgba(107, 114, 128, 0.15);
+  border-bottom: 1px solid rgba(107, 114, 128, 0.25);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #A89082;
+  text-align: center;
+  letter-spacing: 0.01em;
+}
+
+/* ==========================================================================
+   APP SHELL ENTRY ANIMATION
+   ========================================================================== */
+
+@keyframes appShellIn {
+  from { opacity: 0; transform: translateX(12px); }
+  to { opacity: 1; transform: translateX(0); }
+}

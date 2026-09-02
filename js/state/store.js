@@ -19,6 +19,8 @@ class Store {
       try {
         const parsed = JSON.parse(saved);
         if (parsed.currentMunicipalityId === 'mun-cumbresmayores') {
+          // Always clear session on page load — force auth screen on every visit
+          parsed.currentUser = null;
           return parsed;
         }
       } catch (e) {
@@ -28,7 +30,7 @@ class Store {
 
     const initialState = {
       currentMunicipalityId: 'mun-cumbresmayores',
-      currentUser: MockData.users[0], // María Carmen Márquez (Citizen)
+      currentUser: null, // Always start unauthenticated — auth gate handles login
       municipalities: [...MockData.municipalities],
       departments: [...MockData.departments],
       categories: [...MockData.categories],
@@ -45,7 +47,7 @@ class Store {
           type: 'info'
         }
       ],
-      currentTheme: localStorage.getItem('civitas_theme') || 'light'
+      currentTheme: localStorage.getItem('civitas_theme') || 'dark'
     };
 
     this.persist(initialState);
